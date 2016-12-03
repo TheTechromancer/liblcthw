@@ -1,4 +1,4 @@
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 #include <lcthw/bstree.h>
 #include <stdlib.h>
 #include <lcthw/bstrlib.h>
@@ -17,7 +17,7 @@ BSTree *BSTree_create(BSTree_compare compare)
 
     return map;
 
-error:
+end:
     if (map) {
         BSTree_destroy(map);
     }
@@ -49,7 +49,7 @@ static inline BSTreeNode *BSTreeNode_create(BSTreeNode * parent,
     node->parent = parent;
     return node;
 
-error:
+end:
     return NULL;
 }
 
@@ -84,7 +84,7 @@ int BSTree_set(BSTree * map, void *key, void *data)
     }
 
     return 0;
-error:
+end:
     return -1;
 }
 

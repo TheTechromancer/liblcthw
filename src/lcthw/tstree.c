@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 #include <lcthw/tstree.h>
 
 static inline TSTree *TSTree_insert_base(TSTree * root, TSTree * node,

@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "u.h"
 #include <lcthw/tstree.h>
 #include <string.h>
 #include <assert.h>
@@ -55,11 +55,11 @@ char *test_search_prefix()
 {
     void *res = TSTree_search_prefix(
             node, bdata(&test1), blength(&test1));
-    debug("result: %p, expected: %p", res, valueA);
+    log_debug("result: %p, expected: %p", res, valueA);
     mu_assert(res == valueA, "Got wrong valueA by prefix.");
 
     res = TSTree_search_prefix(node, bdata(&test1), 1);
-    debug("result: %p, expected: %p", res, valueA);
+    log_debug("result: %p, expected: %p", res, valueA);
     mu_assert(res == value4, "Got wrong value4 for prefix of 1.");
 
     res = TSTree_search_prefix(node, "TE", strlen("TE"));
@@ -82,7 +82,7 @@ char *test_traverse()
 {
     traverse_count = 0;
     TSTree_traverse(node, TSTree_traverse_test_cb, valueA);
-    debug("traverse count is: %d", traverse_count);
+    log_debug("traverse count is: %d", traverse_count);
     mu_assert(traverse_count == 4, "Didn't find 4 keys.");
 
     return NULL;

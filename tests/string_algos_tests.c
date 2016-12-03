@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "u.h"
 #include <lcthw/string_algos.h>
 #include <lcthw/bstrlib.h>
 #include <time.h>
@@ -54,7 +54,7 @@ char *test_binstr_performance()
         elapsed = time(NULL) - start;
     } while (elapsed <= TEST_TIME);
 
-    debug("BINSTR COUNT: %lu, END TIME: %d, OPS: %f",
+    log_debug("BINSTR COUNT: %lu, END TIME: %d, OPS: %f",
             find_count, (int)elapsed, (double)find_count / elapsed);
     return NULL;
 }
@@ -76,7 +76,7 @@ char *test_find_performance()
         elapsed = time(NULL) - start;
     } while (elapsed <= TEST_TIME);
 
-    debug("FIND COUNT: %lu, END TIME: %d, OPS: %f",
+    log_debug("FIND COUNT: %lu, END TIME: %d, OPS: %f",
             find_count, (int)elapsed, (double)find_count / elapsed);
 
     return NULL;
@@ -105,7 +105,7 @@ char *test_scan_performance()
         elapsed = time(NULL) - start;
     } while (elapsed <= TEST_TIME);
 
-    debug("SCAN COUNT: %lu, END TIME: %d, OPS: %f",
+    log_debug("SCAN COUNT: %lu, END TIME: %d, OPS: %f",
             find_count, (int)elapsed, (double)find_count / elapsed);
 
     StringScanner_destroy(scan);

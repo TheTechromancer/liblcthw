@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "u.h"
 #include <lcthw/radixmap.h>
 #include <time.h>
 
@@ -14,7 +14,7 @@ static int make_random(RadixMap * map)
 
     return i;
 
-error:
+end:
     return 0;
 }
 
@@ -29,7 +29,7 @@ static int check_order(RadixMap * map)
         d2 = map->contents[i + 1];
 
         if (d1.data.key > d2.data.key) {
-            debug("FAIL:i=%u, key: %u, value: %u, equals max? %d\n", i,
+            log_debug("FAIL:i=%u, key: %u, value: %u, equals max? %d\n", i,
                     d1.data.key, d1.data.value,
                     d2.data.key == UINT32_MAX);
             return 0;
@@ -55,7 +55,7 @@ static int test_search(RadixMap * map)
     }
 
     return 1;
-error:
+end:
     return 0;
 }
 

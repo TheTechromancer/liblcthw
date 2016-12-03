@@ -1,7 +1,7 @@
 #include <math.h>
 #include <lcthw/stats.h>
 #include <stdlib.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 
 Stats *Stats_recreate(double sum, double sumsq, unsigned long n,
         double min, double max)
@@ -17,7 +17,7 @@ Stats *Stats_recreate(double sum, double sumsq, unsigned long n,
 
     return st;
 
-error:
+end:
     return NULL;
 }
 

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <lcthw/radixmap.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 
 RadixMap *RadixMap_create(size_t max)
 {
@@ -23,7 +23,7 @@ RadixMap *RadixMap_create(size_t max)
     map->end = 0;
 
     return map;
-error:
+end:
     return NULL;
 }
 
@@ -115,7 +115,7 @@ int RadixMap_add(RadixMap * map, uint32_t key, uint32_t value)
 
     return 0;
 
-error:
+end:
     return -1;
 }
 
@@ -134,6 +134,6 @@ int RadixMap_delete(RadixMap * map, RMElement * el)
     map->end--;
 
     return 0;
-error:
+end:
     return -1;
 }

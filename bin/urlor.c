@@ -16,7 +16,7 @@ TSTree *add_route_data(TSTree * routes, bstring line)
 
     return routes;
 
-error:
+end:
     return NULL;
 }
 
@@ -39,7 +39,7 @@ TSTree *load_routes(const char *file)
     fclose(routes_map);
     return routes;
 
-error:
+end:
     if (routes_map) fclose(routes_map);
     if (line) bdestroy(line);
 
@@ -63,13 +63,13 @@ bstring read_line(const char *prompt)
     printf("%s", prompt);
 
     bstring result = bgets((bNgetc) fgetc, stdin, '\n');
-    check_debug(result != NULL, "stdin closed.");
+    check_log_debug(result != NULL, "stdin closed.");
 
     check(btrimws(result) == BSTR_OK, "Failed to trim.");
 
     return result;
 
-error:
+end:
     return NULL;
 }
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
     while (1) {
         url = read_line("URL> ");
-        check_debug(url != NULL, "goodbye.");
+        check_log_debug(url != NULL, "goodbye.");
 
         route = match_url(routes, url);
 
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     destroy_routes(routes);
     return 0;
 
-error:
+end:
     destroy_routes(routes);
     return 1;
 }

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 #include <lcthw/ringbuffer.h>
 
 RingBuffer *RingBuffer_create(int length)
@@ -41,7 +41,7 @@ int RingBuffer_write(RingBuffer * buffer, char *data, int length)
     RingBuffer_commit_write(buffer, length);
 
     return length;
-error:
+end:
     return -1;
 }
 
@@ -61,7 +61,7 @@ int RingBuffer_read(RingBuffer * buffer, char *target, int amount)
     }
 
     return amount;
-error:
+end:
     return -1;
 }
 
@@ -81,6 +81,6 @@ bstring RingBuffer_gets(RingBuffer * buffer, int amount)
             && "Error in read commit.");
 
     return result;
-error:
+end:
     return NULL;
 }

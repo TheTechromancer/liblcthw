@@ -17,7 +17,7 @@ DArray *DArray_create(size_t element_size, size_t initial_max)
 
     return array;
 
-error:
+end:
     if (array)
         free(array);
     return NULL;
@@ -49,7 +49,7 @@ static inline int DArray_resize(DArray * array, size_t newsize)
     array->contents = contents;
 
     return 0;
-error:
+end:
     return -1;
 }
 
@@ -63,7 +63,7 @@ int DArray_expand(DArray * array)
     memset(array->contents + old_max, 0, array->expand_rate + 1);
     return 0;
 
-error:
+end:
     return -1;
 }
 
@@ -115,6 +115,6 @@ void *DArray_pop(DArray * array)
     }
 
     return el;
-error:
+end:
     return NULL;
 }

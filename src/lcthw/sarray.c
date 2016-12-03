@@ -1,6 +1,6 @@
 #undef NDEBUG
 #include <lcthw/sarray.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 #include <stdlib.h>
 
 
@@ -72,7 +72,7 @@ SuffixArray *SuffixArray_create(char *data, int length)
 
     return sarry;
 
-error:
+end:
     if(sarry) {
         SuffixArray_destroy(sarry);
     }

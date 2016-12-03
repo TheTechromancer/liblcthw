@@ -2,7 +2,7 @@
 #include <lcthw/hashmap.h>
 #include <lcthw/hashmap_algos.h>
 #include <lcthw/darray.h>
-#include "minunit.h"
+#include "u.h"
 
 struct tagbstring test1 = bsStatic("test data 1");
 struct tagbstring test2 = bsStatic("test data 2");
@@ -78,7 +78,7 @@ int gen_keys(DArray * keys, int num_keys)
 
     result = 0; // all good
 
-error: // fallthrough
+end: // fallthrough
     if(stream) bsclose(stream);
     if(urand) fclose(urand);
     if(key) bdestroy(key);

@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "u.h"
 #include <lcthw/queue.h>
 #include <assert.h>
 
@@ -34,7 +34,7 @@ char *test_send_recv()
     mu_assert(Queue_count(queue) == NUM_TESTS, "Wrong count on send.");
 
     QUEUE_FOREACH(queue, cur) {
-        debug("VAL: %s", (char *)cur->value);
+        log_debug("VAL: %s", (char *)cur->value);
     }
 
     for (i = 0; i < NUM_TESTS; i++) {

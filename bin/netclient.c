@@ -3,7 +3,7 @@
 #include <sys/select.h>
 #include <stdio.h>
 #include <lcthw/ringbuffer.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/uio.h>
@@ -24,7 +24,7 @@ int nonblock(int fd)
     check(rc == 0, "Can't set nonblocking.");
 
     return 0;
-error:
+end:
     return -1;
 }
 
@@ -48,7 +48,7 @@ int client_connect(char *host, char *port)
     freeaddrinfo(addr);
     return sock;
 
-error:
+end:
     freeaddrinfo(addr);
     return -1;
 }
@@ -75,7 +75,7 @@ int read_some(RingBuffer * buffer, int fd, int is_socket)
 
     return rc;
 
-error:
+end:
     return -1;
 }
 
@@ -100,7 +100,7 @@ int write_some(RingBuffer * buffer, int fd, int is_socket)
 
     return rc;
 
-error:
+end:
     return -1;
 }
 
@@ -130,27 +130,27 @@ int main(int argc, char *argv[])
 
         if (FD_ISSET(0, &readmask)) {
             rc = read_some(in_rb, 0, 0);
-            check_debug(rc != -1, "Failed to read from stdin.");
+            check_log_debug(rc != -1, "Failed to read from stdin.");
         }
 
         if (FD_ISSET(socket, &readmask)) {
             rc = read_some(sock_rb, socket, 0);
-            check_debug(rc != -1, "Failed to read from socket.");
+            check_log_debug(rc != -1, "Failed to read from socket.");
         }
 
         while (!RingBuffer_empty(sock_rb)) {
             rc = write_some(sock_rb, 1, 0);
-            check_debug(rc != -1, "Failed to write to stdout.");
+            check_log_debug(rc != -1, "Failed to write to stdout.");
         }
 
         while (!RingBuffer_empty(in_rb)) {
             rc = write_some(in_rb, socket, 1);
-            check_debug(rc != -1, "Failed to write to socket.");
+            check_log_debug(rc != -1, "Failed to write to socket.");
         }
     }
 
     return 0;
 
-error:
+end:
     return -1;
 }

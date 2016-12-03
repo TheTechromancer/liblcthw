@@ -1,11 +1,11 @@
-#undef NDEBUG
+#undef Nlog_debug
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <limits.h>
 #include <ctype.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 #include <lcthw/bstrlib.h>
 
 /*
@@ -60,13 +60,13 @@ static char *dumpBstring(const struct tagbstring *b)
     if (s == NULL) {
         if (res != NULL)
             ret++;
-        debug(".\tbfromcstr (NULL) = %s", dumpBstring(b0));
+        log_debug(".\tbfromcstr (NULL) = %s", dumpBstring(b0));
         return ret;
     }
     ret += (res == NULL) || ((int)strlen(res) != b0->slen) 
         ||(0 != memcmp(res, b0->data, b0->slen));
     ret += b0->data[b0->slen] != '\0';
-    debug(".\tbfromcstr (\"%s\") = %s", s, dumpBstring(b0));
+    log_debug(".\tbfromcstr (\"%s\") = %s", s, dumpBstring(b0));
     bdestroy(b0);
     return ret;
 }
@@ -78,14 +78,14 @@ static int test0_1(const char *s, int len, const char *res)
     if (s == NULL) {
         if (res != NULL)
             ret++;
-        debug(".\tbfromcstralloc (*, NULL) = %s", dumpBstring(b0));
+        log_debug(".\tbfromcstralloc (*, NULL) = %s", dumpBstring(b0));
         return ret;
     }
     ret += (res == NULL) || ((int)strlen(res) != b0->slen) 
         ||(0 != memcmp(res, b0->data, b0->slen));
     ret += b0->data[b0->slen] != '\0';
     ret += len > b0->mlen;
-    debug(".\tbfromcstralloc (%d, \"%s\") = %s", len, s,
+    log_debug(".\tbfromcstralloc (%d, \"%s\") = %s", len, s,
             dumpBstring(b0));
     bdestroy(b0);
     return ret;
@@ -98,7 +98,7 @@ static int test0_1(const char *s, int len, const char *res)
 static int test0(void)
 {
     int ret = 0;
-    debug("TEST: bstring bfromcstr (const char * str);");
+    log_debug("TEST: bstring bfromcstr (const char * str);");
 
     /* tests with NULL */ 
     ret += test0_0(NULL, NULL);
@@ -107,8 +107,8 @@ static int test0(void)
     ret += test0_0(EMPTY_STRING, EMPTY_STRING);
     ret += test0_0(SHORT_STRING, SHORT_STRING);
     ret += test0_0(LONG_STRING, LONG_STRING);
-    debug("\t# failures: %d", ret);
-    debug
+    log_debug("\t# failures: %d", ret);
+    log_debug
         ("TEST: bstring bfromcstralloc (int len, const char * str);");
 
     /* tests with NULL */ 
@@ -122,7 +122,7 @@ static int test0(void)
     ret += test0_1(SHORT_STRING, 30, SHORT_STRING);
     ret += test0_1(LONG_STRING, 0, LONG_STRING);
     ret += test0_1(LONG_STRING, 30, LONG_STRING);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -133,19 +133,19 @@ static int test1_0(const void *blk, int len, const char *res)
     if (b0 == NULL) {
         if (res != NULL)
             ret++;
-        debug(".\tblk2bstr (NULL, len=%d) = %s", len, dumpBstring(b0));
+        log_debug(".\tblk2bstr (NULL, len=%d) = %s", len, dumpBstring(b0));
     } else {
         ret += (res == NULL) || (len != b0->slen) 
             ||(0 != memcmp(res, b0->data, len));
         ret += b0->data[b0->slen] != '\0';
-        debug(".\tblk2bstr (blk=%p, len=%d) = %s", blk, len,
+        log_debug(".\tblk2bstr (blk=%p, len=%d) = %s", blk, len,
                 dumpBstring(b0));
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     bdestroy(b0);
     return ret;
@@ -154,7 +154,7 @@ static int test1_0(const void *blk, int len, const char *res)
 static int test1(void)
 {
     int ret = 0;
-    debug("TEST: bstring blk2bstr (const void * blk, int len);");
+    log_debug("TEST: bstring blk2bstr (const void * blk, int len);");
 
     /* tests with NULL */ 
     ret += test1_0(NULL, 10, NULL);
@@ -168,7 +168,7 @@ static int test1(void)
     ret += test1_0(LONG_STRING, 5, "This ");
     ret += test1_0(LONG_STRING, 0, "");
     ret += test1_0(LONG_STRING, -1, NULL);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -179,7 +179,7 @@ static int test2_0(const_bstring b, char z, const unsigned char *res)
     if (s == NULL) {
         if (res != NULL)
             ret++;
-        debug(".\tbstr2cstr (%s, %02X) = NULL", dumpBstring(b), z);
+        log_debug(".\tbstr2cstr (%s, %02X) = NULL", dumpBstring(b), z);
         bcstrfree(s);
         return ret;
     }
@@ -194,7 +194,7 @@ static int test2_0(const_bstring b, char z, const unsigned char *res)
             ret += (0 != memcmp(res, b->data, b->slen));
         }
     }
-    debug(".\tbstr2cstr (%s, %02X) = \"%s\"", dumpBstring(b), z, s);
+    log_debug(".\tbstr2cstr (%s, %02X) = \"%s\"", dumpBstring(b), z, s);
     bcstrfree(s);
     return ret;
 }
@@ -212,7 +212,7 @@ struct tagbstring xxxxxBstring = bsStatic("xxxxx");
 static int test2(void)
 {
     int ret = 0;
-    debug("TEST: char * bstr2cstr (const_bstring s, char z);");
+    log_debug("TEST: char * bstr2cstr (const_bstring s, char z);");
 
     /* tests with NULL */ 
     ret += test2_0(NULL, (char)'?', NULL);
@@ -223,7 +223,7 @@ static int test2(void)
     ret += test2_0(&longBstring, (char)'?', longBstring.data);
     ret += test2_0(&badBstring1, (char)'?', NULL);
     ret += test2_0(&badBstring2, (char)'?', NULL);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -231,7 +231,7 @@ static int test3_0(const_bstring b)
 {
     bstring b0 = bstrcpy(b);
     int ret = 0;
-    debug(".\tbstrcpy (%s) = %s", dumpBstring(b), dumpBstring(b0));
+    log_debug(".\tbstrcpy (%s) = %s", dumpBstring(b), dumpBstring(b0));
     if (b0 == NULL) {
         if (b != NULL && b->data != NULL && b->slen >= 0)
             ret++;
@@ -247,7 +247,7 @@ static int test3_0(const_bstring b)
 static int test3(void)
 {
     int ret = 0;
-    debug("TEST: bstring bstrcpy (const_bstring b1);");
+    log_debug("TEST: bstring bstrcpy (const_bstring b1);");
 
     /* tests with NULL to make sure that there is NULL propogation */ 
     ret += test3_0(NULL);
@@ -258,7 +258,7 @@ static int test3(void)
     ret += test3_0(&emptyBstring);
     ret += test3_0(&shortBstring);
     ret += test3_0(&longBstring);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -267,7 +267,7 @@ static int test4_0(const_bstring b, int left, int len,
 {
     bstring b0 = bmidstr(b, left, len);
     int ret = 0;
-    debug(".\tbmidstr (%s, %d, %d) = %s", dumpBstring(b), left, len,
+    log_debug(".\tbmidstr (%s, %d, %d) = %s", dumpBstring(b), left, len,
             dumpBstring(b0));
     if (b0 == NULL) {
         if (b != NULL && b->data != NULL && b->slen >= 0 && len >= 0)
@@ -281,20 +281,20 @@ static int test4_0(const_bstring b, int left, int len,
                 ||(b0->slen > 0 && 0 != memcmp(res, b0->data, b0->slen));
         ret += b0->data[b0->slen] != '\0';
     } if (ret) {
-        debug("(b == NULL)                  = %d", (b == NULL));
-        debug("(res == NULL)                = %d", (res == NULL));
-        debug("(b0->slen > len && len >= 0) = %d",
+        log_debug("(b == NULL)                  = %d", (b == NULL));
+        log_debug("(res == NULL)                = %d", (res == NULL));
+        log_debug("(b0->slen > len && len >= 0) = %d",
                 (b0->slen > len && len >= 0));
         if (res)
-            debug("(b0->slen != strlen (res))   = %d",
+            log_debug("(b0->slen != strlen (res))   = %d",
                     (b0->slen != (int)strlen(res)));
-        debug
+        log_debug
             ("(b0->slen > 0 && 0 != memcmp (res, b0->data, b0->slen) = %d",
              (b0->slen > 0 && 0 != memcmp(res, b0->data, b0->slen)));
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     bdestroy(b0);
     return ret;
@@ -303,7 +303,7 @@ static int test4_0(const_bstring b, int left, int len,
 static int test4(void)
 {
     int ret = 0;
-    debug
+    log_debug
         ("TEST: bstring bmidstr (const_bstring b, int left, int len);");
 
     /* tests with NULL to make sure that there is NULL propogation */ 
@@ -326,7 +326,7 @@ static int test4(void)
     ret += test4_0(&shortBstring, -1, 9, "bogus");
     ret += test4_0(&shortBstring, 3, -1, "");
     ret += test4_0(&shortBstring, 9, 3, "");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -338,16 +338,16 @@ static int test5_0(bstring b0, const_bstring b1, const char *res)
             && b1 != NULL && b1->data != NULL && b1->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbconcat (%s, ", dumpBstring(b2));
+        log_debug(".\tbconcat (%s, ", dumpBstring(b2));
         rv = bconcat(b2, b1);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%s) = %s", dumpBstring(b1), dumpBstring(b2));
+        log_debug("%s) = %s", dumpBstring(b1), dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbconcat (%s, ", dumpBstring(b2));
+        log_debug(".\tbconcat (%s, ", dumpBstring(b2));
         rv = bconcat(b2, b1);
-        debug("%s) = %s", dumpBstring(b1), dumpBstring(b2));
+        log_debug("%s) = %s", dumpBstring(b1), dumpBstring(b2));
         if (b1)
             ret += (b2->slen != b0->slen + b1->slen);
         ret += ((0 != rv) && (b1 != NULL)) || ((0 == rv)
@@ -360,14 +360,14 @@ static int test5_0(bstring b0, const_bstring b1, const char *res)
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = bconcat(b0, b1)));
-        debug(".\tbconcat (%s, %s) = %d", dumpBstring(b0),
+        log_debug(".\tbconcat (%s, %s) = %d", dumpBstring(b0),
                 dumpBstring(b1), rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -377,7 +377,7 @@ static int test5_1(void)
     bstring b, c;
     struct tagbstring t;
     int i, ret;
-    debug("TEST: bconcat aliasing");
+    log_debug("TEST: bconcat aliasing");
     for (ret = i = 0; i < longBstring.slen; i++) {
         b = bstrcpy(&longBstring);
         c = bstrcpy(&longBstring);
@@ -399,7 +399,7 @@ static int test5_1(void)
     bdestroy(b);
     bdestroy(c);
     if (ret) {
-        debug("\t\talias failures(%d) = %d", __LINE__, ret);
+        log_debug("\t\talias failures(%d) = %d", __LINE__, ret);
     }
     return ret;
 }
@@ -407,7 +407,7 @@ static int test5_1(void)
 static int test5(void)
 {
     int ret = 0;
-    debug("TEST: int bconcat (bstring b0, const_bstring b1);");
+    log_debug("TEST: int bconcat (bstring b0, const_bstring b1);");
 
     /* tests with NULL */ 
     ret += test5_0(NULL, NULL, NULL);
@@ -424,7 +424,7 @@ static int test5(void)
     ret += test5_0(&shortBstring, &emptyBstring, "bogus");
     ret += test5_0(&shortBstring, &shortBstring, "bogusbogus");
     ret += test5_1();
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -439,7 +439,7 @@ static int test6_0(bstring b, char c, const char *res)
         ret += (rv == 0);
         if (!biseq(b0, b))
             ret++;
-        debug(".\tbconchar (%s, %c) = %s", dumpBstring(b), c,
+        log_debug(".\tbconchar (%s, %c) = %s", dumpBstring(b), c,
                 dumpBstring(b0));
         bwriteallow(*b0);
         rv = bconchar(b0, c);
@@ -448,18 +448,18 @@ static int test6_0(bstring b, char c, const char *res)
         ret += (res == NULL) || ((int)strlen(res) > b0->slen) 
             ||(0 != memcmp(b0->data, res, b0->slen));
         ret += b0->data[b0->slen] != '\0';
-        debug(".\tbconchar (%s, %c) = %s", dumpBstring(b), c,
+        log_debug(".\tbconchar (%s, %c) = %s", dumpBstring(b), c,
                 dumpBstring(b0));
         bdestroy(b0);
     } else {
         ret += (BSTR_ERR != (rv = bconchar(b, c)));
-        debug(".\tbconchar (%s, %c) = %d", dumpBstring(b), c, rv);
+        log_debug(".\tbconchar (%s, %c) = %d", dumpBstring(b), c, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -467,7 +467,7 @@ static int test6_0(bstring b, char c, const char *res)
 static int test6(void)
 {
     int ret = 0;
-    debug("TEST: int bconchar (bstring b, char c);");
+    log_debug("TEST: int bconchar (bstring b, char c);");
 
     /* tests with NULL */ 
     ret += test6_0(NULL, (char)'x', NULL);
@@ -477,7 +477,7 @@ static int test6(void)
     /* normal operation tests on all sorts of subranges */ 
     ret += test6_0(&emptyBstring, (char)'x', "x");
     ret += test6_0(&shortBstring, (char)'x', "bogusx");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -489,10 +489,10 @@ static int test7x8_0(char *fnname,
 {
     int rv, ret = 0;
     ret += (res != (rv = fnptr(b0, b1)));
-    debug(".\t%s (%s, %s) = %d", fnname, dumpBstring(b0),
+    log_debug(".\t%s (%s, %s) = %d", fnname, dumpBstring(b0),
             dumpBstring(b1), rv);
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
     }
     return ret;
 }
@@ -503,7 +503,7 @@ static int test7x8(char *fnname,
         int retFail, int retLT, int retGT, int retEQ)
 {
     int ret = 0;
-    debug("TEST: int %s (const_bstring b0, const_bstring b1);",
+    log_debug("TEST: int %s (const_bstring b0, const_bstring b1);",
             fnname);
 
     /* tests with NULL */ 
@@ -550,7 +550,7 @@ static int test7x8(char *fnname,
             test7x8_0(fnname, fnptr, &longBstring, &shortBstring,
                     'T' - 'b');
     }
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -561,10 +561,10 @@ static int test9_0(const_bstring b0, const_bstring b1, int n, int res)
 {
     int rv, ret = 0;
     ret += (res != (rv = bstrncmp(b0, b1, n)));
-    debug(".\tbstrncmp (%s, %s, %d) = %d", dumpBstring(b0),
+    log_debug(".\tbstrncmp (%s, %s, %d) = %d", dumpBstring(b0),
             dumpBstring(b1), n, rv);
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
     }
     return ret;
 }
@@ -572,7 +572,7 @@ static int test9_0(const_bstring b0, const_bstring b1, int n, int res)
 static int test9(void)
 {
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int bstrncmp (const_bstring b0, const_bstring b1, int n);");
 
     /* tests with NULL */ 
@@ -598,7 +598,7 @@ static int test9(void)
     ret += test9_0(&shortBstring, &shortBstring, 0, 0);
     ret += test9_0(&shortBstring, &shortBstring, 1, 0);
     ret += test9_0(&shortBstring, &shortBstring, 9, 0);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -608,9 +608,9 @@ static int test10_0(bstring b, int res, int nochange)
     int rv, x, ret = 0;
     if (b)
         sb = *b;
-    debug(".\tbdestroy (%s) = ", dumpBstring(b));
+    log_debug(".\tbdestroy (%s) = ", dumpBstring(b));
     rv = bdestroy(b);
-    debug("%d", rv);
+    log_debug("%d", rv);
     if (b != NULL) {
         if (rv >= 0)
 
@@ -625,7 +625,7 @@ static int test10_0(bstring b, int res, int nochange)
     ret += (rv != res);
     ret += (!nochange) == (!x);
     if (ret) {
-        debug
+        log_debug
             ("\t\tfailure(%d) res = %d nochange = %d, x = %d, sb.slen = %d, sb.mlen = %d, sb.data = %p",
              __LINE__, res, nochange, x, sb.slen, sb.mlen, sb.data);
     }
@@ -637,7 +637,7 @@ static int test10(void)
     bstring c = bstrcpy(&shortBstring);
     bstring b = bstrcpy(&emptyBstring);
     int ret = 0;
-    debug("TEST: int bdestroy (const_bstring b);");
+    log_debug("TEST: int bdestroy (const_bstring b);");
 
     /* tests with NULL */ 
     ret += test10_0(NULL, BSTR_ERR, 1);
@@ -659,20 +659,20 @@ static int test10(void)
     ret += test10_0(&shortBstring, BSTR_ERR, 1);
     ret += test10_0(&badBstring1, BSTR_ERR, 1);
     ret += test10_0(&badBstring2, BSTR_ERR, 1);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
 static int test11_0(bstring s1, int pos, const_bstring s2, int res)
 {
     int rv, ret = 0;
-    debug(".\tbinstr (%s, %d, %s) = ", dumpBstring(s1), pos,
+    log_debug(".\tbinstr (%s, %d, %s) = ", dumpBstring(s1), pos,
             dumpBstring(s2));
     rv = binstr(s1, pos, s2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -680,13 +680,13 @@ static int test11_0(bstring s1, int pos, const_bstring s2, int res)
 static int test11_1(bstring s1, int pos, const_bstring s2, int res)
 {
     int rv, ret = 0;
-    debug(".\tbinstrcaseless (%s, %d, %s) = ", dumpBstring(s1), pos,
+    log_debug(".\tbinstrcaseless (%s, %d, %s) = ", dumpBstring(s1), pos,
             dumpBstring(s2));
     rv = binstrcaseless(s1, pos, s2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -695,7 +695,7 @@ static int test11(void)
 {
     bstring b, c;
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int binstr (const_bstring s1, int pos, const_bstring s2);");
     ret += test11_0(NULL, 0, NULL, BSTR_ERR);
     ret += test11_0(&emptyBstring, 0, NULL, BSTR_ERR);
@@ -755,7 +755,7 @@ static int test11(void)
             bfromcstr("sap"), 9);
     bdestroy(c);
     bdestroy(b);
-    debug
+    log_debug
         ("TEST: int binstrcaseless (const_bstring s1, int pos, const_bstring s2);");
     ret += test11_1(NULL, 0, NULL, BSTR_ERR);
     ret += test11_1(&emptyBstring, 0, NULL, BSTR_ERR);
@@ -778,20 +778,20 @@ static int test11(void)
     bdestroy(b);
     ret += test11_1(&longBstring, 0, &shortBstring, 10);
     ret += test11_1(&longBstring, 20, &shortBstring, BSTR_ERR);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
 static int test12_0(bstring s1, int pos, const_bstring s2, int res)
 {
     int rv, ret = 0;
-    debug(".\tbinstrr (%s, %d, %s) = ", dumpBstring(s1), pos,
+    log_debug(".\tbinstrr (%s, %d, %s) = ", dumpBstring(s1), pos,
             dumpBstring(s2));
     rv = binstrr(s1, pos, s2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -799,13 +799,13 @@ static int test12_0(bstring s1, int pos, const_bstring s2, int res)
 static int test12_1(bstring s1, int pos, const_bstring s2, int res)
 {
     int rv, ret = 0;
-    debug(".\tbinstrrcaseless (%s, %d, %s) = ", dumpBstring(s1), pos,
+    log_debug(".\tbinstrrcaseless (%s, %d, %s) = ", dumpBstring(s1), pos,
             dumpBstring(s2));
     rv = binstrrcaseless(s1, pos, s2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -814,7 +814,7 @@ static int test12(void)
 {
     bstring b;
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int binstrr (const_bstring s1, int pos, const_bstring s2);");
     ret += test12_0(NULL, 0, NULL, BSTR_ERR);
     ret += test12_0(&emptyBstring, 0, NULL, BSTR_ERR);
@@ -838,7 +838,7 @@ static int test12(void)
     bdestroy(b);
     ret += test12_0(&longBstring, 0, &shortBstring, BSTR_ERR);
     ret += test12_0(&longBstring, 20, &shortBstring, 10);
-    debug
+    log_debug
         ("TEST: int binstrrcaseless (const_bstring s1, int pos, const_bstring s2);");
     ret += test12_1(NULL, 0, NULL, BSTR_ERR);
     ret += test12_1(&emptyBstring, 0, NULL, BSTR_ERR);
@@ -861,20 +861,20 @@ static int test12(void)
     bdestroy(b);
     ret += test12_1(&longBstring, 0, &shortBstring, BSTR_ERR);
     ret += test12_1(&longBstring, 20, &shortBstring, 10);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
 static int test13_0(bstring s1, int pos, const_bstring s2, int res)
 {
     int rv, ret = 0;
-    debug(".\tbinchr (%s, %d, %s) = ", dumpBstring(s1), pos,
+    log_debug(".\tbinchr (%s, %d, %s) = ", dumpBstring(s1), pos,
             dumpBstring(s2));
     rv = binchr(s1, pos, s2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -884,7 +884,7 @@ static int test13(void)
     bstring b;
     int ret = 0;
     struct tagbstring multipleOs = bsStatic("ooooo");
-    debug
+    log_debug
         ("TEST: int binchr (const_bstring s1, int pos, const_bstring s2);");
     ret += test13_0(NULL, 0, NULL, BSTR_ERR);
     ret += test13_0(&emptyBstring, 0, NULL, BSTR_ERR);
@@ -908,20 +908,20 @@ static int test13(void)
     ret += test13_0(&xxxxxBstring, 0, &shortBstring, BSTR_ERR);
     ret += test13_0(&longBstring, 0, &shortBstring, 3);
     ret += test13_0(&longBstring, 10, &shortBstring, 10);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
 static int test14_0(bstring s1, int pos, const_bstring s2, int res)
 {
     int rv, ret = 0;
-    debug(".\tbinchrr (%s, %d, %s) = ", dumpBstring(s1), pos,
+    log_debug(".\tbinchrr (%s, %d, %s) = ", dumpBstring(s1), pos,
             dumpBstring(s2));
     rv = binchrr(s1, pos, s2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -930,7 +930,7 @@ static int test14(void)
 {
     bstring b;
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int binchrr (const_bstring s1, int pos, const_bstring s2);");
     ret += test14_0(NULL, 0, NULL, BSTR_ERR);
     ret += test14_0(&emptyBstring, 0, NULL, BSTR_ERR);
@@ -954,7 +954,7 @@ static int test14(void)
     ret += test14_0(&xxxxxBstring, 4, &shortBstring, BSTR_ERR);
     ret += test14_0(&longBstring, 0, &shortBstring, BSTR_ERR);
     ret += test14_0(&longBstring, 10, &shortBstring, 10);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -967,7 +967,7 @@ static int test15_0(bstring b0, int pos, const_bstring b1,
             && b1 != NULL && b1->data != NULL && b1->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbsetstr (%s, ", dumpBstring(b2));
+        log_debug(".\tbsetstr (%s, ", dumpBstring(b2));
         rv = bsetstr(b2, pos, b1, fill);
         ret += (rv == 0);
         if (ret && 0 == linenum)
@@ -976,10 +976,10 @@ static int test15_0(bstring b0, int pos, const_bstring b1,
             ret++;
         if (ret && 0 == linenum)
             linenum = __LINE__;
-        debug("%d, %s, %02X) = %s", pos, dumpBstring(b1), fill,
+        log_debug("%d, %s, %02X) = %s", pos, dumpBstring(b1), fill,
                 dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbsetstr (%s, ", dumpBstring(b2));
+        log_debug(".\tbsetstr (%s, ", dumpBstring(b2));
         rv = bsetstr(b2, pos, b1, fill);
         if (b1) {
             ret += (pos >= 0) && (b2->slen != b0->slen + b1->slen)
@@ -1005,21 +1005,21 @@ static int test15_0(bstring b0, int pos, const_bstring b1,
         ret += b2->data[b2->slen] != '\0';
         if (ret && 0 == linenum)
             linenum = __LINE__;
-        debug("%d, %s, %02X) = %s", pos, dumpBstring(b1), fill,
+        log_debug("%d, %s, %02X) = %s", pos, dumpBstring(b1), fill,
                 dumpBstring(b2));
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = bsetstr(b0, pos, b1, fill)));
         if (ret && 0 == linenum)
             linenum = __LINE__;
-        debug(".\tbsetstr (%s, %d, %s, %02X) = %d", dumpBstring(b0),
+        log_debug(".\tbsetstr (%s, %d, %s, %02X) = %d", dumpBstring(b0),
                 pos, dumpBstring(b1), fill, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", linenum, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", linenum, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -1027,7 +1027,7 @@ static int test15_0(bstring b0, int pos, const_bstring b1,
 static int test15(void)
 {
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int bsetstr (bstring b0, int pos, const_bstring b1, unsigned char fill);");
 
     /* tests with NULL */ 
@@ -1084,7 +1084,7 @@ static int test15(void)
                 "bogus?bogus");
     ret +=
         test15_0(&shortBstring, 6, NULL, (unsigned char)'?', "bogus?");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -1097,15 +1097,15 @@ static int test16_0(bstring b0, int pos, const_bstring b1,
             && b1 != NULL && b1->data != NULL && b1->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbinsert (%s, ", dumpBstring(b2));
+        log_debug(".\tbinsert (%s, ", dumpBstring(b2));
         rv = binsert(b2, pos, b1, fill);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%d, %s, %02X) = %s", pos, dumpBstring(b1), fill,
+        log_debug("%d, %s, %02X) = %s", pos, dumpBstring(b1), fill,
                 dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbinsert (%s, ", dumpBstring(b2));
+        log_debug(".\tbinsert (%s, ", dumpBstring(b2));
         rv = binsert(b2, pos, b1, fill);
         if (b1) {
             ret += (pos >= 0) && (b2->slen != b0->slen + b1->slen)
@@ -1116,19 +1116,19 @@ static int test16_0(bstring b0, int pos, const_bstring b1,
         ret += (res == NULL) || ((int)strlen(res) > b2->slen) 
             ||(0 != memcmp(b2->data, res, b2->slen));
         ret += b2->data[b2->slen] != '\0';
-        debug("%d, %s, %02X) = %s", pos, dumpBstring(b1), fill,
+        log_debug("%d, %s, %02X) = %s", pos, dumpBstring(b1), fill,
                 dumpBstring(b2));
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = binsert(b0, pos, b1, fill)));
-        debug(".\tbinsert (%s, %d, %s, %02X) = %d", dumpBstring(b0),
+        log_debug(".\tbinsert (%s, %d, %s, %02X) = %d", dumpBstring(b0),
                 pos, dumpBstring(b1), fill, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -1136,7 +1136,7 @@ static int test16_0(bstring b0, int pos, const_bstring b1,
 static int test16(void)
 {
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int binsert (bstring b0, int pos, const_bstring b1, unsigned char fill);");
 
     /* tests with NULL */ 
@@ -1193,7 +1193,7 @@ static int test16(void)
                 "bogus?bogus");
     ret +=
         test16_0(&shortBstring, 6, NULL, (unsigned char)'?', "bogus");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -1204,14 +1204,14 @@ static int test17_0(bstring s1, int pos, int len, char *res)
     if (s1 != NULL && s1->data != NULL && s1->slen >= 0) {
         b2 = bstrcpy(s1);
         bwriteprotect(*b2);
-        debug(".\tbdelete (%s, ", dumpBstring(b2));
+        log_debug(".\tbdelete (%s, ", dumpBstring(b2));
         rv = bdelete(b2, pos, len);
         ret += (rv == 0);
         if (!biseq(s1, b2))
             ret++;
-        debug("%d, %d) = %s", pos, len, dumpBstring(b2));
+        log_debug("%d, %d) = %s", pos, len, dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbdelete (%s, ", dumpBstring(b2));
+        log_debug(".\tbdelete (%s, ", dumpBstring(b2));
         rv = bdelete(b2, pos, len);
         ret += (len >= 0) != (rv == 0);
         ret += (b2->slen > s1->slen) || (b2->slen < pos
@@ -1221,18 +1221,18 @@ static int test17_0(bstring s1, int pos, int len, char *res)
                     memcmp(b2->data, res,
                         b2->slen));
         ret += b2->data[b2->slen] != '\0';
-        debug("%d, %d) = %s", pos, len, dumpBstring(b2));
+        log_debug("%d, %d) = %s", pos, len, dumpBstring(b2));
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = bdelete(s1, pos, len)));
-        debug(".\tbdelete (%s, %d, %d) = %d", dumpBstring(s1), pos,
+        log_debug(".\tbdelete (%s, %d, %d) = %d", dumpBstring(s1), pos,
                 len, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -1240,7 +1240,7 @@ static int test17_0(bstring s1, int pos, int len, char *res)
 static int test17(void)
 {
     int ret = 0;
-    debug("TEST: int bdelete (bstring s1, int pos, int len);");
+    log_debug("TEST: int bdelete (bstring s1, int pos, int len);");
 
     /* tests with NULL */ 
     ret += test17_0(NULL, 0, 0, NULL);
@@ -1255,7 +1255,7 @@ static int test17(void)
     ret += test17_0(&shortBstring, 3, 9, "bog");
     ret += test17_0(&shortBstring, 3, 1, "bogs");
     ret += test17_0(&longBstring, 4, 300, "This");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -1264,22 +1264,22 @@ static int test18_0(bstring b, int len, int res, int mlen)
     int ret = 0;
     int rv;
     int ol = 0;
-    debug(".\tballoc (%s, %d) = ", dumpBstring(b), len);
+    log_debug(".\tballoc (%s, %d) = ", dumpBstring(b), len);
     if (b)
         ol = b->mlen;
     rv = balloc(b, len);
-    debug("%d", rv);
+    log_debug("%d", rv);
     if (b != NULL && b->data != NULL && b->slen >= 0 && ol > b->mlen) {
-        debug("\t\tfailure(%d) oldmlen = %d, newmlen %d", __LINE__, ol,
+        log_debug("\t\tfailure(%d) oldmlen = %d, newmlen %d", __LINE__, ol,
                 b->mlen);
         ret++;
     }
     if (rv != res) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
         ret++;
     }
     if (b != NULL && (mlen > b->mlen || b->mlen == 0)) {
-        debug("\t\tfailure(%d) b->mlen = %d mlen = %d", __LINE__,
+        log_debug("\t\tfailure(%d) b->mlen = %d mlen = %d", __LINE__,
                 b->mlen, mlen);
         ret++;
     }
@@ -1292,19 +1292,19 @@ static int test18_1_int(bstring b, int len, int res, int mlen,
     int ret = 0;
     int rv;
     int ol = 0;
-    debug(".\tballocmin (%s, %d) = ", dumpBstring(b), len);
+    log_debug(".\tballocmin (%s, %d) = ", dumpBstring(b), len);
     if (b)
         ol = b->mlen;
     rv = ballocmin(b, len);
-    debug("[%d] %d", __LINE__, rv);
+    log_debug("[%d] %d", __LINE__, rv);
     if (b != NULL && b->data != NULL && b->mlen != mlen) {
-        debug
+        log_debug
             ("\t\t[%d] failure(%d) oldmlen = %d, newmlen = %d, mlen = %d len = %d",
              __line__, __LINE__, ol, b->mlen, mlen, b->slen);
         ret++;
     }
     if (rv != res) {
-        debug("\t\t[%d] failure(%d) res = %d", __line__, __LINE__,
+        log_debug("\t\t[%d] failure(%d) res = %d", __line__, __LINE__,
                 res);
         ret++;
     }
@@ -1317,7 +1317,7 @@ static int test18(void)
 {
     int ret = 0, reto;
     bstring b = bfromcstr("test");
-    debug("TEST: int balloc (bstring s, int len);");
+    log_debug("TEST: int balloc (bstring s, int len);");
 
     /* tests with NULL */ 
     ret += test18_0(NULL, 2, BSTR_ERR, 0);
@@ -1335,11 +1335,11 @@ static int test18(void)
     ret += test18_0(b, 2, 0, b->mlen);
     ret += test18_0(&emptyBstring, 9, BSTR_ERR, emptyBstring.mlen);
     bdestroy(b);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     reto = ret;
     ret = 0;
     b = bfromcstr("test");
-    debug("TEST: int ballocmin (bstring s, int len);");
+    log_debug("TEST: int ballocmin (bstring s, int len);");
 
     /* tests with NULL */ 
     ret += test18_1(NULL, 2, BSTR_ERR, 0);
@@ -1358,7 +1358,7 @@ static int test18(void)
     ret += test18_1(b, 2, 0, b->slen + 1);
     ret += test18_1(&emptyBstring, 9, BSTR_ERR, emptyBstring.mlen);
     bdestroy(b);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return reto + ret;
 }
 
@@ -1372,9 +1372,9 @@ static int test19_0(bstring b, int len, const char *res, int erv)
         ret += bpattern(b1, len) != BSTR_ERR;
         ret += !biseq(b1, b);
         bwriteallow(*b1);
-        debug(".\tbpattern (%s, %d) = ", dumpBstring(b1), len);
+        log_debug(".\tbpattern (%s, %d) = ", dumpBstring(b1), len);
         rv = bpattern(b1, len);
-        debug("%s", dumpBstring(b1));
+        log_debug("%s", dumpBstring(b1));
         ret += (rv != erv);
         ret += (res == NULL) || ((int)strlen(res) > b1->slen) 
             ||(0 != memcmp(b1->data, res, b1->slen));
@@ -1382,14 +1382,14 @@ static int test19_0(bstring b, int len, const char *res, int erv)
         bdestroy(b1);
     } else {
         ret += BSTR_ERR != (rv = bpattern(b, len));
-        debug(".\tbpattern (%s, %d) = %d", dumpBstring(b), len, rv);
+        log_debug(".\tbpattern (%s, %d) = %d", dumpBstring(b), len, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) rv = %d erv = %d (res = %p", __LINE__,
+        log_debug("\t\tfailure(%d) rv = %d erv = %d (res = %p", __LINE__,
                 rv, erv, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -1397,7 +1397,7 @@ static int test19_0(bstring b, int len, const char *res, int erv)
 static int test19(void)
 {
     int ret = 0;
-    debug("TEST: int bpattern (bstring b, int len);");
+    log_debug("TEST: int bpattern (bstring b, int len);");
 
     /* tests with NULL */ 
     ret += test19_0(NULL, 0, NULL, BSTR_ERR);
@@ -1413,7 +1413,7 @@ static int test19(void)
     ret += test19_0(&shortBstring, 0, "", 0);
     ret += test19_0(&shortBstring, 12, "bogusbogusbo", 0);
     ret += test19_0(&shortBstring, -1, "bogus", BSTR_ERR);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -1424,29 +1424,29 @@ static int test20(void)
 #if !defined (BSTRLIB_NOVSNP)
     int rv;
     bstring b, c;
-    debug("TEST: bstring bformat (const char * fmt, ...);");
+    log_debug("TEST: bstring bformat (const char * fmt, ...);");
 
     /* tests with NULL */ 
-    debug(".\tbformat (NULL, 1, 2) = ");
+    log_debug(".\tbformat (NULL, 1, 2) = ");
     b = bformat(NULL, 1, 2);
-    debug("%s", dumpBstring(b));
+    log_debug("%s", dumpBstring(b));
     ret += b != NULL;
 
     /* normal operation tests */ 
-    debug(".\tbformat (\"%%d %%s\", 1, \"xy\") = ");
+    log_debug(".\tbformat (\"%%d %%s\", 1, \"xy\") = ");
     b = bformat("%d %s", 1, "xy");
-    debug("%s", dumpBstring(b));
+    log_debug("%s", dumpBstring(b));
     ret += !biseq(c = bfromcstr("1 xy"), b);
     bdestroy(b);
-    debug(".\tbformat (\"%%d %%s(%%s)\", 6, %s, %s) = ",
+    log_debug(".\tbformat (\"%%d %%s(%%s)\", 6, %s, %s) = ",
             dumpBstring(c), dumpBstring(&shortBstring));
     b = bformat("%d %s(%s)", 6, c->data, shortBstring.data);
-    debug("%s", dumpBstring(b));
+    log_debug("%s", dumpBstring(b));
     bdestroy(c);
     ret += !biseq(c = bfromcstr("6 1 xy(bogus)"), b);
     bdestroy(c);
     bdestroy(b);
-    debug(".\tbformat (\"%%s%%s%%s%%s%%s%%s%%s%%s\", ...) ...");
+    log_debug(".\tbformat (\"%%s%%s%%s%%s%%s%%s%%s%%s\", ...) ...");
     b = bformat("%s%s%s%s%s%s%s%s", longBstring.data,
             longBstring.data , longBstring.data,
             longBstring.data , longBstring.data,
@@ -1459,27 +1459,27 @@ static int test20(void)
     ret += !biseq(c, b);
     bdestroy(c);
     bdestroy(b);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     b = bfromcstr("");
-    debug("TEST: int bformata (bstring b, const char * fmt, ...);");
+    log_debug("TEST: int bformata (bstring b, const char * fmt, ...);");
 
     /* tests with NULL */ 
-    debug(".\tbformata (%s, NULL, 1, 2) = ", dumpBstring(b));
+    log_debug(".\tbformata (%s, NULL, 1, 2) = ", dumpBstring(b));
     rv = bformata(b, NULL, 1, 2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += rv != BSTR_ERR;
-    debug(".\tbformata (%s, \"%%d %%d\", 1, 2) = ",
+    log_debug(".\tbformata (%s, \"%%d %%d\", 1, 2) = ",
             dumpBstring(&badBstring1));
     rv = bformata(&badBstring1, "%d %d", 1, 2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += rv != BSTR_ERR;
-    debug(".\tbformata (%s, \"%%d %%d\", 1, 2) = ", dumpBstring(b));
+    log_debug(".\tbformata (%s, \"%%d %%d\", 1, 2) = ", dumpBstring(b));
     rv = bformata(b, "%d %d", 1, 2);
-    debug("%s", dumpBstring(b));
+    log_debug("%s", dumpBstring(b));
     ret += !biseq(c = bfromcstr("1 2"), b);
     bdestroy(c);
     bdestroy(b);
-    debug
+    log_debug
         (".\tbformata (\"x\", \"%%s%%s%%s%%s%%s%%s%%s%%s\", ...) ...");
     rv = bformata(b =
             bfromcstr("x"), "%s%s%s%s%s%s%s%s",
@@ -1496,29 +1496,29 @@ static int test20(void)
     ret += !biseq(c, b);
     bdestroy(c);
     bdestroy(b);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     b = bfromcstr("Initial");
-    debug
+    log_debug
         ("TEST: int bassignformat (bstring b, const char * fmt, ...);");
 
     /* tests with NULL */ 
-    debug(".\tbassignformat (%s, NULL, 1, 2) = ", dumpBstring(b));
+    log_debug(".\tbassignformat (%s, NULL, 1, 2) = ", dumpBstring(b));
     rv = bassignformat(b, NULL, 1, 2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += rv != BSTR_ERR;
-    debug(".\tbassignformat (%s, \"%%d %%d\", 1, 2) = ",
+    log_debug(".\tbassignformat (%s, \"%%d %%d\", 1, 2) = ",
             dumpBstring(&badBstring1));
     rv = bassignformat(&badBstring1, "%d %d", 1, 2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += rv != BSTR_ERR;
-    debug(".\tbassignformat (%s, \"%%d %%d\", 1, 2) = ",
+    log_debug(".\tbassignformat (%s, \"%%d %%d\", 1, 2) = ",
             dumpBstring(b));
     rv = bassignformat(b, "%d %d", 1, 2);
-    debug("%s", dumpBstring(b));
+    log_debug("%s", dumpBstring(b));
     ret += !biseq(c = bfromcstr("1 2"), b);
     bdestroy(c);
     bdestroy(b);
-    debug
+    log_debug
         (".\tbassignformat (\"x\", \"%%s%%s%%s%%s%%s%%s%%s%%s\", ...) ...");
     rv = bassignformat(b =
             bfromcstr("x"), "%s%s%s%s%s%s%s%s",
@@ -1534,7 +1534,7 @@ static int test20(void)
     ret += !biseq(c, b);
     bdestroy(c);
     bdestroy(b);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
 
 #endif	/*  */
     return ret;
@@ -1544,28 +1544,28 @@ static int test21_0(bstring b, char sc, int ns)
 {
     struct bstrList *l;
     int ret = 0;
-    debug(".\tbsplit (%s, '%c') = ", dumpBstring(b), sc);
+    log_debug(".\tbsplit (%s, '%c') = ", dumpBstring(b), sc);
     if (b != NULL && b->data != NULL && b->slen >= 0) {
         bstring c;
         struct tagbstring t;
         blk2tbstr(t, &sc, 1);
-        debug("{");
+        log_debug("{");
         l = bsplit(b, sc);
         if (l) {
             int i;
             for (i = 0; i < l->qty; i++) {
                 if (i != 0)
-                    debug(", ");
-                debug("%s", dumpBstring(l->entry[i]));
+                    log_debug(", ");
+                log_debug("%s", dumpBstring(l->entry[i]));
             }
-            debug(":<%d>", l->qty);
+            log_debug(":<%d>", l->qty);
             if (ns != l->qty)
                 ret++;
         } else {
-            debug("NULL");
+            log_debug("NULL");
             ret++;
         }
-        debug("}");
+        log_debug("}");
         c = bjoin(l, &t);
         ret += !biseq(c, b);
         bdestroy(c);
@@ -1573,9 +1573,9 @@ static int test21_0(bstring b, char sc, int ns)
     } else {
         l = bsplit(b, sc);
         ret += (l != NULL);
-        debug("%p", (void *)l);
+        log_debug("%p", (void *)l);
     }  if (ret) {
-        debug("\t\tfailure(%d) ns = %d", __LINE__, ns);
+        log_debug("\t\tfailure(%d) ns = %d", __LINE__, ns);
     }
     return ret;
 }
@@ -1584,27 +1584,27 @@ static int test21_1(bstring b, const_bstring sc, int ns)
 {
     struct bstrList *l;
     int ret = 0;
-    debug(".\tbsplitstr (%s, %s) = ", dumpBstring(b),
+    log_debug(".\tbsplitstr (%s, %s) = ", dumpBstring(b),
             dumpBstring(sc));
     if (b != NULL && b->data != NULL && b->slen >= 0) {
         bstring c;
-        debug("{");
+        log_debug("{");
         l = bsplitstr(b, sc);
         if (l) {
             int i;
             for (i = 0; i < l->qty; i++) {
                 if (i != 0)
-                    debug(", ");
-                debug("%s", dumpBstring(l->entry[i]));
+                    log_debug(", ");
+                log_debug("%s", dumpBstring(l->entry[i]));
             }
-            debug(":<%d>", l->qty);
+            log_debug(":<%d>", l->qty);
             if (ns != l->qty)
                 ret++;
         } else {
-            debug("NULL");
+            log_debug("NULL");
             ret++;
         }
-        debug("}");
+        log_debug("}");
         c = bjoin(l, sc);
         ret += !biseq(c, b);
         bdestroy(c);
@@ -1612,9 +1612,9 @@ static int test21_1(bstring b, const_bstring sc, int ns)
     } else {
         l = bsplitstr(b, sc);
         ret += (l != NULL);
-        debug("%p", (void *)l);
+        log_debug("%p", (void *)l);
     }  if (ret) {
-        debug("\t\tfailure(%d) ns = %d", __LINE__, ns);
+        log_debug("\t\tfailure(%d) ns = %d", __LINE__, ns);
     }
     return ret;
 }
@@ -1624,7 +1624,7 @@ static int test21(void)
     struct tagbstring is = bsStatic("is");
     struct tagbstring ng = bsStatic("ng");
     int ret = 0;
-    debug
+    log_debug
         ("TEST: struct bstrList * bsplit (const_bstring str, unsigned char splitChar);");
 
     /* tests with NULL */ 
@@ -1638,7 +1638,7 @@ static int test21(void)
     ret += test21_0(&shortBstring, (char)'s', 2);
     ret += test21_0(&shortBstring, (char)'b', 2);
     ret += test21_0(&longBstring, (char)'o', 9);
-    debug
+    log_debug
         ("TEST: struct bstrList * bsplitstr (bstring str, const_bstring splitStr);");
     ret += test21_1(NULL, NULL, 0);
     ret += test21_1(&badBstring1, &emptyBstring, 0);
@@ -1662,8 +1662,8 @@ static int test21(void)
             for (;;) {
                 b = bjoin(l = bsplit(list[i], c), &t);
                 if (!biseq(b, list[i])) {
-                    debug("\t\tfailure(%d) ", __LINE__);
-                    debug("join (bsplit (%s, x%02X), {x%02X}) = %s",
+                    log_debug("\t\tfailure(%d) ", __LINE__);
+                    log_debug("join (bsplit (%s, x%02X), {x%02X}) = %s",
                             dumpBstring(list[i]), c, c, dumpBstring(b));
                     ret++;
                 }
@@ -1673,8 +1673,8 @@ static int test21(void)
                     break;
                 b = bjoin(l = bsplitstr(list[i], &t), &t);
                 if (!biseq(b, list[i])) {
-                    debug("\t\tfailure(%d) ", __LINE__);
-                    debug
+                    log_debug("\t\tfailure(%d) ", __LINE__);
+                    log_debug
                         ("join (bsplitstr (%s, {x%02X}), {x%02X}) = %s",
                          dumpBstring(list[i]), c, c, dumpBstring(b));
                     ret++;
@@ -1691,7 +1691,7 @@ static int test21(void)
                 break;
         }
     }
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -1700,10 +1700,10 @@ static int test22_0(const_bstring b, const_bstring sep, int ns, ...)
     va_list arglist;
     struct bstrList *l;
     int ret = 0;
-    debug(".\tbsplits (%s, %s)", dumpBstring(b), dumpBstring(sep));
+    log_debug(".\tbsplits (%s, %s)", dumpBstring(b), dumpBstring(sep));
     if (b != NULL && b->data != NULL && b->slen >= 0 && sep != NULL
             && sep->data != NULL && sep->slen >= 0) {
-        debug(" {");
+        log_debug(" {");
         l = bsplits(b, sep);
         if (l) {
             int i;
@@ -1712,8 +1712,8 @@ static int test22_0(const_bstring b, const_bstring sep, int ns, ...)
                 char *res;
                 res = va_arg(arglist, char *);
                 if (i != 0)
-                    debug(", ");
-                debug("%s", dumpBstring(l->entry[i]));
+                    log_debug(", ");
+                log_debug("%s", dumpBstring(l->entry[i]));
                 ret += (res == NULL)
                     || ((int)strlen(res) > l->entry[i]->slen)  ||(0 !=
                             memcmp
@@ -1728,21 +1728,21 @@ static int test22_0(const_bstring b, const_bstring sep, int ns, ...)
                              slen));
                 ret += l->entry[i]->data[l->entry[i]->slen] != '\0';
             }  va_end(arglist);
-            debug(":<%d>", l->qty);
+            log_debug(":<%d>", l->qty);
             if (ns != l->qty)
                 ret++;
         } else {
-            debug("NULL");
+            log_debug("NULL");
             ret += (ns != 0);
         }
-        debug("}");
+        log_debug("}");
         ret += (0 != bstrListDestroy(l) && l != NULL);
     } else {
         l = bsplits(b, sep);
         ret += (l != NULL);
-        debug(" = %p", (void *)l);
+        log_debug(" = %p", (void *)l);
     }  if (ret) {
-        debug("\t\tfailure(%d) ns = %d", __LINE__, ns);
+        log_debug("\t\tfailure(%d) ns = %d", __LINE__, ns);
     }
     return ret;
 }
@@ -1755,7 +1755,7 @@ static int test22(void)
     struct tagbstring b = bsStatic("b");
     struct tagbstring bs = bsStatic("bs");
     struct tagbstring uo = bsStatic("uo");
-    debug
+    log_debug
         ("TEST: extern struct bstrList * bsplits (const_bstring str, const_bstring splitStr);");
 
     /* tests with NULL */ 
@@ -1789,8 +1789,8 @@ static int test22(void)
             for (;;) {
                 bb = bjoin(l = bsplits(list[i], &t), &t);
                 if (!biseq(bb, list[i])) {
-                    debug("\t\tfailure(%d) ", __LINE__);
-                    debug("join (bsplits (%s, {x%02X}), {x%02X}) = %s",
+                    log_debug("\t\tfailure(%d) ", __LINE__);
+                    log_debug("join (bsplits (%s, {x%02X}), {x%02X}) = %s",
                             dumpBstring(list[i]), c, c, dumpBstring(bb));
                     ret++;
                 }
@@ -1806,7 +1806,7 @@ static int test22(void)
                 break;
         }
     }
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -1880,7 +1880,7 @@ static int test23(void)
     struct bStream *bs;
     bstring b;
     int l, ret = 0;
-    debug("TEST: bstream integrated test");
+    log_debug("TEST: bstream integrated test");
     test23_aux_open(&sb, &longBstring);
     ret += NULL != (bs = bsopen((bNread) NULL, &sb));
     ret += NULL == (bs = bsopen((bNread) test23_aux_read, &sb));
@@ -1888,32 +1888,32 @@ static int test23(void)
     ret += BSTR_ERR != bsbufflength(NULL, -1);
     ret += BSTR_ERR != bsbufflength(NULL, 1);
     ret += BSTR_ERR != bsbufflength(bs, -1);
-    debug(".\tbsbufflength (bs, 0) -> %d", bsbufflength(bs, 0));
+    log_debug(".\tbsbufflength (bs, 0) -> %d", bsbufflength(bs, 0));
     ret += BSTR_ERR == bsbufflength(bs, 1);
     ret += BSTR_ERR != bspeek(NULL, bs);
     ret += BSTR_ERR != bsreadln(NULL, bs, (char)'?');
     ret += BSTR_ERR != bsreadln(&emptyBstring, bs, (char)'?');
     ret += BSTR_ERR != bspeek(&emptyBstring, bs);
     ret += BSTR_ERR == bspeek(b = bfromcstr(""), bs);
-    debug(".\tbspeek () -> %s", dumpBstring(b));
+    log_debug(".\tbspeek () -> %s", dumpBstring(b));
     ret += BSTR_ERR != bsreadln(b, NULL, (char)'?');
     b->slen = 0;
     ret += BSTR_ERR == bsreadln(b, bs, (char)'?');
     ret += (bseof(bs) <= 0);
     ret += biseq(b, &longBstring) < 0;
-    debug(".\tbsreadln ('?') -> %s", dumpBstring(b));
+    log_debug(".\tbsreadln ('?') -> %s", dumpBstring(b));
     ret += BSTR_ERR == bsunread(bs, b);
     ret += (bseof(bs) != 0);
-    debug(".\tbsunread (%s)", dumpBstring(b));
+    log_debug(".\tbsunread (%s)", dumpBstring(b));
     b->slen = 0;
     ret += BSTR_ERR == bspeek(b, bs);
     ret += biseq(b, &longBstring) < 0;
-    debug(".\tbspeek () -> %s", dumpBstring(b));
+    log_debug(".\tbspeek () -> %s", dumpBstring(b));
     b->slen = 0;
     ret += BSTR_ERR == bsreadln(b, bs, (char)'?');
     ret += (bseof(bs) <= 0);
     ret += biseq(b, &longBstring) < 0;
-    debug(".\tbsreadln ('?') -> %s", dumpBstring(b));
+    log_debug(".\tbsreadln ('?') -> %s", dumpBstring(b));
     ret += NULL == bsclose(bs);
     sb.ofs = 0;
     ret += NULL == (bs = bsopen((bNread) test23_aux_read, &sb));
@@ -1922,18 +1922,18 @@ static int test23(void)
     l = b->slen;
     ret += (0 != bstrncmp(b, &longBstring, l))
         || (longBstring.data[l - 1] != '.');
-    debug(".\tbsreadln ('.') -> %s", dumpBstring(b));
+    log_debug(".\tbsreadln ('.') -> %s", dumpBstring(b));
     ret += BSTR_ERR == bsunread(bs, b);
-    debug(".\tbsunread (%s)", dumpBstring(b));
+    log_debug(".\tbsunread (%s)", dumpBstring(b));
     b->slen = 0;
     ret += BSTR_ERR == bspeek(b, bs);
     ret += biseq(b, &longBstring) < 0;
-    debug(".\tbspeek () -> %s", dumpBstring(b));
+    log_debug(".\tbspeek () -> %s", dumpBstring(b));
     b->slen = 0;
     ret += BSTR_ERR == bsreadln(b, bs, (char)'.');
     ret += b->slen != l || (0 != bstrncmp(b, &longBstring, l))
         || (longBstring.data[l - 1] != '.');
-    debug(".\tbsreadln ('.') -> %s", dumpBstring(b));
+    log_debug(".\tbsreadln ('.') -> %s", dumpBstring(b));
     ret += NULL == bsclose(bs);
     test23_aux_open(&sb, &longBstring);
     ret += NULL == (bs = bsopen((bNread) test23_aux_read, &sb));
@@ -1942,7 +1942,7 @@ static int test23(void)
     l = bssplitscb(bs, &space, test23_aux_splitcb, b);
     ret += (bseof(bs) <= 0);
     ret += NULL == bsclose(bs);
-    debug(".\tbssplitscb (' ') -> %s", dumpBstring(b));
+    log_debug(".\tbssplitscb (' ') -> %s", dumpBstring(b));
     for (l = 1; l < 4; l++) {
         char *str;
         for (str = (char *)longBstring.data; *str; str++) {
@@ -1982,8 +1982,8 @@ static int test23(void)
                 bssplitscb(bs, &t, test23_aux_splitcbx, &bss);
                 bsclose(bs);
                 if (!biseq(bss.b, list[i])) {
-                    debug("\t\tfailure(%d) ", __LINE__);
-                    debug
+                    log_debug("\t\tfailure(%d) ", __LINE__);
+                    log_debug
                         ("join (bssplitscb (%s, {x%02X}), {x%02X}) = %s",
                          dumpBstring(list[i]), c, c,
                          dumpBstring(bss.b));
@@ -2008,8 +2008,8 @@ static int test23(void)
                 bssplitstrcb(bs, &t, test23_aux_splitcbx, &bss);
                 bsclose(bs);
                 if (!biseq(bss.b, list[i])) {
-                    debug("\t\tfailure(%d) ", __LINE__);
-                    debug
+                    log_debug("\t\tfailure(%d) ", __LINE__);
+                    log_debug
                         ("join (bssplitstrcb (%s, {x%02X}), {x%02X}) = %s",
                          dumpBstring(list[i]), c, c,
                          dumpBstring(bss.b));
@@ -2026,20 +2026,20 @@ static int test23(void)
                 break;
         }
     }
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
 static int test24_0(bstring s1, int pos, const_bstring s2, int res)
 {
     int rv, ret = 0;
-    debug(".\tbninchr (%s, %d, %s) = ", dumpBstring(s1), pos,
+    log_debug(".\tbninchr (%s, %d, %s) = ", dumpBstring(s1), pos,
             dumpBstring(s2));
     rv = bninchr(s1, pos, s2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -2048,7 +2048,7 @@ static int test24(void)
 {
     bstring b;
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int bninchr (const_bstring s1, int pos, const_bstring s2);");
     ret += test24_0(NULL, 0, NULL, BSTR_ERR);
     ret += test24_0(&emptyBstring, 0, NULL, BSTR_ERR);
@@ -2069,20 +2069,20 @@ static int test24(void)
     ret += test24_0(&emptyBstring, 0, &shortBstring, BSTR_ERR);
     ret += test24_0(&longBstring, 0, &shortBstring, 0);
     ret += test24_0(&longBstring, 10, &shortBstring, 15);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
 static int test25_0(bstring s1, int pos, const_bstring s2, int res)
 {
     int rv, ret = 0;
-    debug(".\tbninchrr (%s, %d, %s) = ", dumpBstring(s1), pos,
+    log_debug(".\tbninchrr (%s, %d, %s) = ", dumpBstring(s1), pos,
             dumpBstring(s2));
     rv = bninchrr(s1, pos, s2);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -2091,7 +2091,7 @@ static int test25(void)
 {
     bstring b;
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int bninchrr (const_bstring s1, int pos, const_bstring s2);");
     ret += test25_0(NULL, 0, NULL, BSTR_ERR);
     ret += test25_0(&emptyBstring, 0, NULL, BSTR_ERR);
@@ -2107,7 +2107,7 @@ static int test25(void)
     bdestroy(b);
     ret += test25_0(&xxxxxBstring, 4, &shortBstring, 4);
     ret += test25_0(&emptyBstring, 0, &shortBstring, BSTR_ERR);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2120,15 +2120,15 @@ static int test26_0(bstring b0, int pos, int len, const_bstring b1,
             && b1 != NULL && b1->data != NULL && b1->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbreplace (%s, ", dumpBstring(b2));
+        log_debug(".\tbreplace (%s, ", dumpBstring(b2));
         rv = breplace(b2, pos, len, b1, fill);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%d, %d, %s, %02X) = %s", pos, len, dumpBstring(b1),
+        log_debug("%d, %d, %s, %02X) = %s", pos, len, dumpBstring(b1),
                 fill, dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbreplace (%s, ", dumpBstring(b2));
+        log_debug(".\tbreplace (%s, ", dumpBstring(b2));
         rv = breplace(b2, pos, len, b1, fill);
         if (b1) {
             ret += (pos < 0) && (b2->slen != b0->slen);
@@ -2137,19 +2137,19 @@ static int test26_0(bstring b0, int pos, int len, const_bstring b1,
         ret += (res == NULL) || ((int)strlen(res) > b2->slen) 
             ||(0 != memcmp(b2->data, res, b2->slen));
         ret += b2->data[b2->slen] != '\0';
-        debug("%d, %d, %s, %02X) = %s", pos, len, dumpBstring(b1),
+        log_debug("%d, %d, %s, %02X) = %s", pos, len, dumpBstring(b1),
                 fill, dumpBstring(b2));
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = breplace(b0, pos, len, b1, fill)));
-        debug(".\tbreplace (%s, %d, %d, %s, %02X) = %d",
+        log_debug(".\tbreplace (%s, %d, %d, %s, %02X) = %d",
                 dumpBstring(b0), pos, len, dumpBstring(b1), fill, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -2157,7 +2157,7 @@ static int test26_0(bstring b0, int pos, int len, const_bstring b1,
 static int test26(void)
 {
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int breplace (bstring b0, int pos, int len, const_bstring b1, unsigned char fill);");
 
     /* tests with NULL */ 
@@ -2208,7 +2208,7 @@ static int test26(void)
     ret +=
         test26_0(&shortBstring, 6, 0, NULL, (unsigned char)'?',
                 "bogus");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2220,16 +2220,16 @@ static int test27_0(bstring b0, const_bstring b1, const char *res)
             && b1 != NULL && b1->data != NULL && b1->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbassign (%s, ", dumpBstring(b2));
+        log_debug(".\tbassign (%s, ", dumpBstring(b2));
         rv = bassign(b2, b1);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%s) = %s", dumpBstring(b1), dumpBstring(b2));
+        log_debug("%s) = %s", dumpBstring(b1), dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbassign (%s, ", dumpBstring(b2));
+        log_debug(".\tbassign (%s, ", dumpBstring(b2));
         rv = bassign(b2, b1);
-        debug("%s) = %s", dumpBstring(b1), dumpBstring(b2));
+        log_debug("%s) = %s", dumpBstring(b1), dumpBstring(b2));
         if (b1)
             ret += (b2->slen != b1->slen);
         ret += ((0 != rv) && (b1 != NULL)) || ((0 == rv)
@@ -2242,14 +2242,14 @@ static int test27_0(bstring b0, const_bstring b1, const char *res)
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = bassign(b0, b1)));
-        debug(".\tbassign (%s, %s) = %d", dumpBstring(b0),
+        log_debug(".\tbassign (%s, %s) = %d", dumpBstring(b0),
                 dumpBstring(b1), rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -2257,7 +2257,7 @@ static int test27_0(bstring b0, const_bstring b1, const char *res)
 static int test27(void)
 {
     int ret = 0;
-    debug("TEST: int bassign (bstring b0, const_bstring b1);");
+    log_debug("TEST: int bassign (bstring b0, const_bstring b1);");
 
     /* tests with NULL */ 
     ret += test27_0(NULL, NULL, NULL);
@@ -2273,19 +2273,19 @@ static int test27(void)
     ret += test27_0(&emptyBstring, &shortBstring, "bogus");
     ret += test27_0(&shortBstring, &emptyBstring, "");
     ret += test27_0(&shortBstring, &shortBstring, "bogus");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
 static int test28_0(bstring s1, int c, int res)
 {
     int rv, ret = 0;
-    debug(".\tbstrchr (%s, %d) = ", dumpBstring(s1), c);
+    log_debug(".\tbstrchr (%s, %d) = ", dumpBstring(s1), c);
     rv = bstrchr(s1, c);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -2293,12 +2293,12 @@ static int test28_0(bstring s1, int c, int res)
 static int test28_1(bstring s1, int c, int res)
 {
     int rv, ret = 0;
-    debug(".\tbstrrchr (%s, %d) = ", dumpBstring(s1), c);
+    log_debug(".\tbstrrchr (%s, %d) = ", dumpBstring(s1), c);
     rv = bstrrchr(s1, c);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d rv = %d", __LINE__, res, rv);
+        log_debug("\t\tfailure(%d) res = %d rv = %d", __LINE__, res, rv);
     }
     return ret;
 }
@@ -2306,12 +2306,12 @@ static int test28_1(bstring s1, int c, int res)
 static int test28_2(bstring s1, int c, int pos, int res)
 {
     int rv, ret = 0;
-    debug(".\tbstrchrp (%s, %d, %d) = ", dumpBstring(s1), c, pos);
+    log_debug(".\tbstrchrp (%s, %d, %d) = ", dumpBstring(s1), c, pos);
     rv = bstrchrp(s1, c, pos);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d", __LINE__, res);
+        log_debug("\t\tfailure(%d) res = %d", __LINE__, res);
     }
     return ret;
 }
@@ -2319,12 +2319,12 @@ static int test28_2(bstring s1, int c, int pos, int res)
 static int test28_3(bstring s1, int c, int pos, int res)
 {
     int rv, ret = 0;
-    debug(".\tbstrrchrp (%s, %d, %d) = ", dumpBstring(s1), c, pos);
+    log_debug(".\tbstrrchrp (%s, %d, %d) = ", dumpBstring(s1), c, pos);
     rv = bstrrchrp(s1, c, pos);
-    debug("%d", rv);
+    log_debug("%d", rv);
     ret += (rv != res);
     if (ret) {
-        debug("\t\tfailure(%d) res = %d rv = %d", __LINE__, res, rv);
+        log_debug("\t\tfailure(%d) res = %d rv = %d", __LINE__, res, rv);
     }
     return ret;
 }
@@ -2332,7 +2332,7 @@ static int test28_3(bstring s1, int c, int pos, int res)
 static int test28(void)
 {
     int ret = 0;
-    debug("TEST: int bstrchr (const_bstring s1, int c);");
+    log_debug("TEST: int bstrchr (const_bstring s1, int c);");
     ret += test28_0(NULL, 0, BSTR_ERR);
     ret += test28_0(&badBstring1, 'b', BSTR_ERR);
     ret += test28_0(&badBstring2, 's', BSTR_ERR);
@@ -2344,7 +2344,7 @@ static int test28(void)
     ret += test28_0(&xxxxxBstring, 0, BSTR_ERR);
     ret += test28_0(&xxxxxBstring, 'b', BSTR_ERR);
     ret += test28_0(&longBstring, 'i', 2);
-    debug("TEST: int bstrrchr (const_bstring s1, int c);");
+    log_debug("TEST: int bstrrchr (const_bstring s1, int c);");
     ret += test28_1(NULL, 0, BSTR_ERR);
     ret += test28_1(&badBstring1, 'b', BSTR_ERR);
     ret += test28_1(&badBstring2, 's', BSTR_ERR);
@@ -2356,7 +2356,7 @@ static int test28(void)
     ret += test28_1(&xxxxxBstring, 0, BSTR_ERR);
     ret += test28_1(&xxxxxBstring, 'b', BSTR_ERR);
     ret += test28_1(&longBstring, 'i', 82);
-    debug("TEST: int bstrchrp (const_bstring s1, int c, int pos);");
+    log_debug("TEST: int bstrchrp (const_bstring s1, int c, int pos);");
     ret += test28_2(NULL, 0, 0, BSTR_ERR);
     ret += test28_2(&badBstring1, 'b', 0, BSTR_ERR);
     ret += test28_2(&badBstring2, 's', 0, BSTR_ERR);
@@ -2368,7 +2368,7 @@ static int test28(void)
     ret += test28_2(&shortBstring, 'b', 1, BSTR_ERR);
     ret += test28_2(&shortBstring, 's', 0, 4);
     ret += test28_2(&shortBstring, 'q', 0, BSTR_ERR);
-    debug("TEST: int bstrrchrp (const_bstring s1, int c, int pos);");
+    log_debug("TEST: int bstrrchrp (const_bstring s1, int c, int pos);");
     ret += test28_3(NULL, 0, 0, BSTR_ERR);
     ret += test28_3(&badBstring1, 'b', 0, BSTR_ERR);
     ret += test28_3(&badBstring2, 's', 0, BSTR_ERR);
@@ -2380,7 +2380,7 @@ static int test28(void)
     ret += test28_3(&shortBstring, 'b', shortBstring.slen - 1, 0);
     ret += test28_3(&shortBstring, 's', shortBstring.slen - 1, 4);
     ret += test28_3(&shortBstring, 's', 0, BSTR_ERR);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2391,16 +2391,16 @@ static int test29_0(bstring b0, char *s, const char *res)
     if (b0 != NULL && b0->data != NULL && b0->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbcatcstr (%s, ", dumpBstring(b2));
+        log_debug(".\tbcatcstr (%s, ", dumpBstring(b2));
         rv = bcatcstr(b2, s);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%p) = %s", s, dumpBstring(b2));
+        log_debug("%p) = %s", s, dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbcatcstr (%s, ", dumpBstring(b2));
+        log_debug(".\tbcatcstr (%s, ", dumpBstring(b2));
         rv = bcatcstr(b2, s);
-        debug("%p) = %s", s, dumpBstring(b2));
+        log_debug("%p) = %s", s, dumpBstring(b2));
         if (s)
             ret += (b2->slen != b0->slen + (int)strlen(s));
         ret += ((0 != rv) && (s != NULL)) || ((0 == rv)
@@ -2413,13 +2413,13 @@ static int test29_0(bstring b0, char *s, const char *res)
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = bcatcstr(b0, s)));
-        debug(".\tbcatcstr (%s, %p) = %d", dumpBstring(b0), s, rv);
+        log_debug(".\tbcatcstr (%s, %p) = %d", dumpBstring(b0), s, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -2427,7 +2427,7 @@ static int test29_0(bstring b0, char *s, const char *res)
 static int test29(void)
 {
     int ret = 0;
-    debug("TEST: int bcatcstr (bstring b0, const char * s);");
+    log_debug("TEST: int bcatcstr (bstring b0, const char * s);");
 
     /* tests with NULL */ 
     ret += test29_0(NULL, NULL, NULL);
@@ -2441,7 +2441,7 @@ static int test29(void)
     ret += test29_0(&emptyBstring, "bogus", "bogus");
     ret += test29_0(&shortBstring, "", "bogus");
     ret += test29_0(&shortBstring, "bogus", "bogusbogus");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2453,16 +2453,16 @@ static int test30_0(bstring b0, const unsigned char *s, int len,
     if (b0 != NULL && b0->data != NULL && b0->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbcatblk (%s, ", dumpBstring(b2));
+        log_debug(".\tbcatblk (%s, ", dumpBstring(b2));
         rv = bcatblk(b2, s, len);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%p) = %s", s, dumpBstring(b2));
+        log_debug("%p) = %s", s, dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbcatblk (%s, ", dumpBstring(b2));
+        log_debug(".\tbcatblk (%s, ", dumpBstring(b2));
         rv = bcatblk(b2, s, len);
-        debug("%p) = %s", s, dumpBstring(b2));
+        log_debug("%p) = %s", s, dumpBstring(b2));
         if (s) {
             if (len >= 0)
                 ret += (b2->slen != b0->slen + len);
@@ -2482,14 +2482,14 @@ static int test30_0(bstring b0, const unsigned char *s, int len,
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = bcatblk(b0, s, len)));
-        debug(".\tbcatblk (%s, %p, %d) = %d", dumpBstring(b0), s, len,
+        log_debug(".\tbcatblk (%s, %p, %d) = %d", dumpBstring(b0), s, len,
                 rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -2497,7 +2497,7 @@ static int test30_0(bstring b0, const unsigned char *s, int len,
 static int test30(void)
 {
     int ret = 0;
-    debug("TEST: int bcatblk (bstring b0, const char * s);");
+    log_debug("TEST: int bcatblk (bstring b0, const char * s);");
 
     /* tests with NULL */ 
     ret += test30_0(NULL, NULL, 0, NULL);
@@ -2518,7 +2518,7 @@ static int test30(void)
                 "bogusbogus");
     ret +=
         test30_0(&shortBstring, (unsigned char *)"bogus", -1, "bogus");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2533,33 +2533,33 @@ static int test31_0(bstring b0, const_bstring find,
             && replace->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbfindreplace (%s, %s, %s, %d) = ", dumpBstring(b2),
+        log_debug(".\tbfindreplace (%s, %s, %s, %d) = ", dumpBstring(b2),
                 dumpBstring(find), dumpBstring(replace), pos);
         rv = bfindreplace(b2, find, replace, pos);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%d", rv);
+        log_debug("%d", rv);
         bwriteallow(*b2);
-        debug(".\tbfindreplace (%s, %s, %s, %d)", dumpBstring(b2),
+        log_debug(".\tbfindreplace (%s, %s, %s, %d)", dumpBstring(b2),
                 dumpBstring(find), dumpBstring(replace), pos);
         rv = bfindreplace(b2, find, replace, pos);
         ret += (res == NULL) || ((int)strlen(res) > b2->slen) 
             ||(0 != memcmp(b2->data, res, b2->slen));
         ret += b2->data[b2->slen] != '\0';
-        debug(" -> %s", dumpBstring(b2));
+        log_debug(" -> %s", dumpBstring(b2));
         bdestroy(b2);
     } else {
         ret +=
             (BSTR_ERR != (rv = bfindreplace(b0, find, replace, pos)));
-        debug(".\tbfindreplace (%s, %s, %s, %d) = %d", dumpBstring(b0),
+        log_debug(".\tbfindreplace (%s, %s, %s, %d) = %d", dumpBstring(b0),
                 dumpBstring(find), dumpBstring(replace), pos, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -2575,37 +2575,37 @@ static int test31_1(bstring b0, const_bstring find,
             && replace->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbfindreplacecaseless (%s, %s, %s, %d) = ",
+        log_debug(".\tbfindreplacecaseless (%s, %s, %s, %d) = ",
                 dumpBstring(b2), dumpBstring(find),
                 dumpBstring(replace), pos);
         rv = bfindreplacecaseless(b2, find, replace, pos);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%d", rv);
+        log_debug("%d", rv);
         bwriteallow(*b2);
-        debug(".\tbfindreplacecaseless (%s, %s, %s, %d)",
+        log_debug(".\tbfindreplacecaseless (%s, %s, %s, %d)",
                 dumpBstring(b2), dumpBstring(find),
                 dumpBstring(replace), pos);
         rv = bfindreplacecaseless(b2, find, replace, pos);
         ret += (res == NULL) || ((int)strlen(res) > b2->slen) 
             ||(0 != memcmp(b2->data, res, b2->slen));
         ret += b2->data[b2->slen] != '\0';
-        debug(" -> %s", dumpBstring(b2));
+        log_debug(" -> %s", dumpBstring(b2));
         bdestroy(b2);
     } else {
         ret +=
             (BSTR_ERR !=
              (rv = bfindreplacecaseless(b0, find, replace, pos)));
-        debug(".\tbfindreplacecaseless (%s, %s, %s, %d) = %d",
+        log_debug(".\tbfindreplacecaseless (%s, %s, %s, %d) = %d",
                 dumpBstring(b0), dumpBstring(find), dumpBstring(replace),
                 pos, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -2625,7 +2625,7 @@ static int test31(void)
     struct tagbstring t7 = bsStatic("xx" LOTS_OF_S "xx");
     struct tagbstring t8 = bsStatic("S");
     struct tagbstring t9 = bsStatic("LONG");
-    debug
+    log_debug
         ("TEST: int bfindreplace (bstring b, const_bstring f, const_bstring r, int pos);");
 
     /* tests with NULL */ 
@@ -2659,7 +2659,7 @@ static int test31(void)
                 "This is a bogus but reasonably long string.  Just long enough to cause some mallocing.");
     ret += test31_0(&t6, &t2, &t5, 0, "sssstsssst");
     ret += test31_0(&t7, &t2, &t5, 0, "xx" LOTS_OF_S LOTS_OF_S "xx");
-    debug
+    log_debug
         ("TEST: int bfindreplacecaseless (bstring b, const_bstring f, const_bstring r, int pos);");
 
     /* tests with NULL */ 
@@ -2694,7 +2694,7 @@ static int test31(void)
     ret += test31_1(&t6, &t2, &t5, 0, "sssstsssst");
     ret += test31_1(&t6, &t8, &t5, 0, "sssstsssst");
     ret += test31_1(&t7, &t2, &t5, 0, "xx" LOTS_OF_S LOTS_OF_S "xx");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2702,10 +2702,10 @@ static int test32_0(const_bstring b, const char *s, int res)
 {
     int rv, ret = 0;
     ret += (res != (rv = biseqcstr(b, s)));
-    debug(".\tbiseqcstr (%s, %p:<%s>) = %d", dumpBstring(b), s,
+    log_debug(".\tbiseqcstr (%s, %p:<%s>) = %d", dumpBstring(b), s,
             (s ? s : NULL), rv);
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
     }
     return ret;
 }
@@ -2714,10 +2714,10 @@ static int test32_1(const_bstring b, const char *s, int res)
 {
     int rv, ret = 0;
     ret += (res != (rv = biseqcstrcaseless(b, s)));
-    debug(".\tbiseqcstrcaseless (%s, %p:<%s>) = %d", dumpBstring(b), s,
+    log_debug(".\tbiseqcstrcaseless (%s, %p:<%s>) = %d", dumpBstring(b), s,
             (s ? s : NULL), rv);
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
     }
     return ret;
 }
@@ -2725,7 +2725,7 @@ static int test32_1(const_bstring b, const char *s, int res)
 static int test32(void)
 {
     int ret = 0;
-    debug("TEST: int biseqcstr (const_bstring b, const char * s);");
+    log_debug("TEST: int biseqcstr (const_bstring b, const char * s);");
 
     /* tests with NULL */ 
     ret += test32_0(NULL, NULL, BSTR_ERR);
@@ -2744,7 +2744,7 @@ static int test32(void)
         b->data[1]++;
         ret += test32_0(b, (char *)shortBstring.data, 0);
         bdestroy(b);
-    }  debug
+    }  log_debug
     ("TEST: int biseqcstrcaseless (const_bstring b, const char * s);");
 
     /* tests with NULL */ 
@@ -2766,7 +2766,7 @@ static int test32(void)
         ret += test32_1(b, (char *)shortBstring.data, 0);
         bdestroy(b);
     }  if (ret)
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2777,16 +2777,16 @@ static int test33_0(bstring b0, const char *res)
     if (b0 != NULL && b0->data != NULL && b0->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbtoupper (%s)", dumpBstring(b2));
+        log_debug(".\tbtoupper (%s)", dumpBstring(b2));
         rv = btoupper(b2);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug(" = %s", dumpBstring(b2));
+        log_debug(" = %s", dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbtoupper (%s)", dumpBstring(b2));
+        log_debug(".\tbtoupper (%s)", dumpBstring(b2));
         rv = btoupper(b2);
-        debug(" = %s", dumpBstring(b2));
+        log_debug(" = %s", dumpBstring(b2));
         ret += (b2->slen != b0->slen);
         ret += (0 != rv);
         ret += (res == NULL) || ((int)strlen(res) != b2->slen) 
@@ -2795,13 +2795,13 @@ static int test33_0(bstring b0, const char *res)
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = btoupper(b0)));
-        debug(".\tbtoupper (%s) = %d", dumpBstring(b0), rv);
+        log_debug(".\tbtoupper (%s) = %d", dumpBstring(b0), rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -2809,7 +2809,7 @@ static int test33_0(bstring b0, const char *res)
 static int test33(void)
 {
     int ret = 0;
-    debug("TEST: int btoupper (bstring b);");
+    log_debug("TEST: int btoupper (bstring b);");
 
     /* tests with NULL */ 
     ret += test33_0(NULL, NULL);
@@ -2823,7 +2823,7 @@ static int test33(void)
         test33_0(&longBstring,
                 "THIS IS A BOGUS BUT REASONABLY LONG STRING.  JUST LONG ENOUGH TO CAUSE SOME MALLOCING.");
     if (ret)
-        debug("\t# failures: %d", ret);
+        log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2834,16 +2834,16 @@ static int test34_0(bstring b0, const char *res)
     if (b0 != NULL && b0->data != NULL && b0->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbtolower (%s)", dumpBstring(b2));
+        log_debug(".\tbtolower (%s)", dumpBstring(b2));
         rv = btolower(b2);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug(" = %s", dumpBstring(b2));
+        log_debug(" = %s", dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbtolower (%s)", dumpBstring(b2));
+        log_debug(".\tbtolower (%s)", dumpBstring(b2));
         rv = btolower(b2);
-        debug(" = %s", dumpBstring(b2));
+        log_debug(" = %s", dumpBstring(b2));
         ret += (b2->slen != b0->slen);
         ret += (0 != rv);
         ret += (res == NULL) || ((int)strlen(res) != b2->slen) 
@@ -2852,13 +2852,13 @@ static int test34_0(bstring b0, const char *res)
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = btolower(b0)));
-        debug(".\tbtolower (%s) = %d", dumpBstring(b0), rv);
+        log_debug(".\tbtolower (%s) = %d", dumpBstring(b0), rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -2866,7 +2866,7 @@ static int test34_0(bstring b0, const char *res)
 static int test34(void)
 {
     int ret = 0;
-    debug("TEST: int btolower (bstring b);");
+    log_debug("TEST: int btolower (bstring b);");
 
     /* tests with NULL */ 
     ret += test34_0(NULL, NULL);
@@ -2880,7 +2880,7 @@ static int test34(void)
         test34_0(&longBstring,
                 "this is a bogus but reasonably long string.  just long enough to cause some mallocing.");
     if (ret)
-        debug("\t# failures: %d", ret);
+        log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2888,10 +2888,10 @@ static int test35_0(const_bstring b0, const_bstring b1, int res)
 {
     int rv, ret = 0;
     ret += (res != (rv = bstricmp(b0, b1)));
-    debug(".\tbstricmp (%s, %s) = %d", dumpBstring(b0),
+    log_debug(".\tbstricmp (%s, %s) = %d", dumpBstring(b0),
             dumpBstring(b1), rv);
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
     }
     return ret;
 }
@@ -2902,7 +2902,7 @@ static int test35(void)
     struct tagbstring t0 = bsStatic("bOgUs");
     struct tagbstring t1 = bsStatic("bOgUR");
     struct tagbstring t2 = bsStatic("bOgUt");
-    debug
+    log_debug
         ("TEST: int bstricmp (const_bstring b0, const_bstring b1);");
 
     /* tests with NULL */ 
@@ -2927,7 +2927,7 @@ static int test35(void)
     ret += test35_0(&shortBstring, &t0, -(UCHAR_MAX + 1));
     ret += test35_0(&t0, &shortBstring, (UCHAR_MAX + 1));
     if (ret)
-        debug("\t# failures: %d", ret);
+        log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2936,10 +2936,10 @@ static int test36_0(const_bstring b0, const_bstring b1, int n,
 {
     int rv, ret = 0;
     ret += (res != (rv = bstrnicmp(b0, b1, n)));
-    debug(".\tbstrnicmp (%s, %s, %d) = %d", dumpBstring(b0),
+    log_debug(".\tbstrnicmp (%s, %s, %d) = %d", dumpBstring(b0),
             dumpBstring(b1), n, rv);
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
     }
     return ret;
 }
@@ -2950,7 +2950,7 @@ static int test36(void)
     struct tagbstring t0 = bsStatic("bOgUs");
     struct tagbstring t1 = bsStatic("bOgUR");
     struct tagbstring t2 = bsStatic("bOgUt");
-    debug
+    log_debug
         ("TEST: int bstrnicmp (const_bstring b0, const_bstring b1);");
 
     /* tests with NULL */ 
@@ -2987,7 +2987,7 @@ static int test36(void)
     ret += test36_0(&shortBstring, &t0, 6, -(UCHAR_MAX + 1));
     ret += test36_0(&t0, &shortBstring, 6, (UCHAR_MAX + 1));
     if (ret)
-        debug("\t# failures: %d", ret);
+        log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -2995,10 +2995,10 @@ static int test37_0(const_bstring b0, const_bstring b1, int res)
 {
     int rv, ret = 0;
     ret += (res != (rv = biseqcaseless(b0, b1)));
-    debug(".\tbiseqcaseless (%s, %s) = %d", dumpBstring(b0),
+    log_debug(".\tbiseqcaseless (%s, %s) = %d", dumpBstring(b0),
             dumpBstring(b1), rv);
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %d)", __LINE__, ret, res);
     }
     return ret;
 }
@@ -3009,7 +3009,7 @@ static int test37(void)
     struct tagbstring t0 = bsStatic("bOgUs");
     struct tagbstring t1 = bsStatic("bOgUR");
     struct tagbstring t2 = bsStatic("bOgUt");
-    debug
+    log_debug
         ("TEST: int biseqcaseless (const_bstring b0, const_bstring b1);");
 
     /* tests with NULL */ 
@@ -3027,7 +3027,7 @@ static int test37(void)
     ret += test37_0(&shortBstring, &t1, 0);
     ret += test37_0(&shortBstring, &t2, 0);
     if (ret)
-        debug("\t# failures: %d", ret);
+        log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3078,7 +3078,7 @@ static int test38(void)
     struct emuFile f;
     bstring b0, b1, b2, b3;
     int ret = 0;
-    debug("TEST: bgets/breads test");
+    log_debug("TEST: bgets/breads test");
     test38_aux_bNopen(&f, &shortBstring);
 
     /* Creation/reads */ 
@@ -3119,7 +3119,7 @@ static int test38(void)
     bdestroy(b2);
     bdestroy(b3);
     if (ret)
-        debug("\t# failures: %d", ret);
+        log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3138,17 +3138,17 @@ static int test39_0(const_bstring b, const_bstring lt,
     ret += 0 <= btrimws(r);
     bwriteallow(*r);
     ret += 0 != bltrimws(r);
-    debug(".\tbltrim (%s) = %s", dumpBstring(b), dumpBstring(r));
+    log_debug(".\tbltrim (%s) = %s", dumpBstring(b), dumpBstring(r));
     ret += !biseq(r, lt);
     bdestroy(r);
     r = bstrcpy(b);
     ret += 0 != brtrimws(r);
-    debug(".\tbrtrim (%s) = %s", dumpBstring(b), dumpBstring(r));
+    log_debug(".\tbrtrim (%s) = %s", dumpBstring(b), dumpBstring(r));
     ret += !biseq(r, rt);
     bdestroy(r);
     r = bstrcpy(b);
     ret += 0 != btrimws(r);
-    debug(".\tbtrim  (%s) = %s", dumpBstring(b), dumpBstring(r));
+    log_debug(".\tbtrim  (%s) = %s", dumpBstring(b), dumpBstring(r));
     ret += !biseq(r, t);
     bdestroy(r);
     return ret;
@@ -3163,7 +3163,7 @@ static int test39(void)
     struct tagbstring t3 = bsStatic("bogus string");
     struct tagbstring t4 = bsStatic("     ");
     struct tagbstring t5 = bsStatic("");
-    debug("TEST: trim functions");
+    log_debug("TEST: trim functions");
     ret += test39_0(&t0, &t1, &t2, &t3);
     ret += test39_0(&t1, &t1, &t3, &t3);
     ret += test39_0(&t2, &t3, &t2, &t3);
@@ -3171,7 +3171,7 @@ static int test39(void)
     ret += test39_0(&t4, &t5, &t5, &t5);
     ret += test39_0(&t5, &t5, &t5, &t5);
     if (ret)
-        debug("\t# failures: %d", ret);
+        log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3184,17 +3184,17 @@ static int test40_0(bstring b0, const_bstring b1, int left, int len,
             && b1 != NULL && b1->data != NULL && b1->slen >= 0) {
         b2 = bstrcpy(b0);
         bwriteprotect(*b2);
-        debug(".\tbassignmidstr (%s, ", dumpBstring(b2));
+        log_debug(".\tbassignmidstr (%s, ", dumpBstring(b2));
         rv = bassignmidstr(b2, b1, left, len);
         ret += (rv == 0);
         if (!biseq(b0, b2))
             ret++;
-        debug("%s, %d, %d) = %s", dumpBstring(b1), left, len,
+        log_debug("%s, %d, %d) = %s", dumpBstring(b1), left, len,
                 dumpBstring(b2));
         bwriteallow(*b2);
-        debug(".\tbassignmidstr (%s, ", dumpBstring(b2));
+        log_debug(".\tbassignmidstr (%s, ", dumpBstring(b2));
         rv = bassignmidstr(b2, b1, left, len);
-        debug("%s, %d, %d) = %s", dumpBstring(b1), left, len,
+        log_debug("%s, %d, %d) = %s", dumpBstring(b1), left, len,
                 dumpBstring(b2));
         if (b1)
             ret += (b2->slen > len) | (b2->slen < 0);
@@ -3208,14 +3208,14 @@ static int test40_0(bstring b0, const_bstring b1, int left, int len,
         bdestroy(b2);
     } else {
         ret += (BSTR_ERR != (rv = bassignmidstr(b0, b1, left, len)));
-        debug(".\tbassignmidstr (%s, %s, %d, %d) = %d",
+        log_debug(".\tbassignmidstr (%s, %s, %d, %d) = %d",
                 dumpBstring(b0), dumpBstring(b1), left, len, rv);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -3223,7 +3223,7 @@ static int test40_0(bstring b0, const_bstring b1, int left, int len,
 static int test40(void)
 {
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int bassignmidstr (bstring b0, const_bstring b1, int left, int len);");
 
     /* tests with NULL */ 
@@ -3243,7 +3243,7 @@ static int test40(void)
     ret += test40_0(&shortBstring, &shortBstring, -1, 4, "bog");
     ret += test40_0(&shortBstring, &shortBstring, 1, 9, "ogus");
     ret += test40_0(&shortBstring, &shortBstring, 9, 1, "");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3257,7 +3257,7 @@ static int test41_0(bstring b1, int left, int len, const char *res)
         bassignmidstr(b2, b1, left, len);
         bmid2tbstr(t, b1, left, len);
         b3 = bstrcpy(&t);
-        debug(".\tbmid2tbstr (%s, %d, %d) = %s", dumpBstring(b1),
+        log_debug(".\tbmid2tbstr (%s, %d, %d) = %s", dumpBstring(b1),
                 left, len, dumpBstring(b3));
         ret += !biseq(&t, b2);
         bdestroy(b2);
@@ -3266,15 +3266,15 @@ static int test41_0(bstring b1, int left, int len, const char *res)
         bmid2tbstr(t, b1, left, len);
         b3 = bstrcpy(&t);
         ret += t.slen != 0;
-        debug(".\tbmid2tbstr (%s, %d, %d) = %s", dumpBstring(b1),
+        log_debug(".\tbmid2tbstr (%s, %d, %d) = %s", dumpBstring(b1),
                 left, len, dumpBstring(b3));
         bdestroy(b3);
     }
     if (ret) {
-        debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
+        log_debug("\t\tfailure(%d) = %d (res = %p", __LINE__, ret, res);
         if (res)
-            debug(" = \"%s\"", res);
-        debug(")");
+            log_debug(" = \"%s\"", res);
+        log_debug(")");
     }
     return ret;
 }
@@ -3282,7 +3282,7 @@ static int test41_0(bstring b1, int left, int len, const char *res)
 static int test41(void)
 {
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int bmid2tbstr (struct tagbstring &t, const_bstring b1, int left, int len);");
 
     /* tests with NULL */ 
@@ -3302,7 +3302,7 @@ static int test41(void)
     ret += test41_0(&shortBstring, -1, 4, "bog");
     ret += test41_0(&shortBstring, 1, 9, "ogus");
     ret += test41_0(&shortBstring, 9, 1, "");
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3314,7 +3314,7 @@ static int test42_0(const_bstring bi, int len, const char *res)
     ret += (len >= 0) ? (rv < 0) : (rv >= 0);
     if (res)
         ret += (0 == biseqcstr(b, res));
-    debug(".\tbtrunc (%s, %d) = %s", dumpBstring(bi), len,
+    log_debug(".\tbtrunc (%s, %d) = %s", dumpBstring(bi), len,
             dumpBstring(b));
     bdestroy(b);
     return ret;
@@ -3323,7 +3323,7 @@ static int test42_0(const_bstring bi, int len, const char *res)
 static int test42(void)
 {
     int ret = 0;
-    debug("TEST: int btrunc (bstring b, int n);");
+    log_debug("TEST: int btrunc (bstring b, int n);");
 
     /* tests with NULL */ 
     ret += 0 <= btrunc(NULL, 2);
@@ -3341,7 +3341,7 @@ static int test42(void)
     ret += test42_0(&shortBstring, 3, "bog");
     ret += test42_0(&shortBstring, 0, "");
     ret += test42_0(&shortBstring, -1, NULL);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3357,7 +3357,7 @@ static int test43(void)
         &ts0, &ts1, &ts2, &ts3, &ts4, &ts5};
     int ret = 0;
     int i;
-    debug
+    log_debug
         ("TEST: int btfromblk*trim (struct tagbstring t, void * s, int l);");
     for (i = 0; i < 6; i++) {
         struct tagbstring t;
@@ -3367,10 +3367,10 @@ static int test43(void)
         if (!biseq(b, &t)) {
             ret++;
             bassign(b, &t);
-            debug("btfromblkltrimws failure: <%s> -> <%s>",
+            log_debug("btfromblkltrimws failure: <%s> -> <%s>",
                     tstrs[i]->data, b->data);
         }
-        debug(".\tbtfromblkltrimws (\"%s\", \"%s\", %d)",
+        log_debug(".\tbtfromblkltrimws (\"%s\", \"%s\", %d)",
                 (char *)bdatae(b, NULL), tstrs[i]->data, tstrs[i]->slen);
         bdestroy(b);
         btfromblkrtrimws(t, tstrs[i]->data, tstrs[i]->slen);
@@ -3378,10 +3378,10 @@ static int test43(void)
         if (!biseq(b, &t)) {
             ret++;
             bassign(b, &t);
-            debug("btfromblkrtrimws failure: <%s> -> <%s>",
+            log_debug("btfromblkrtrimws failure: <%s> -> <%s>",
                     tstrs[i]->data, b->data);
         }
-        debug(".\tbtfromblkrtrimws (\"%s\", \"%s\", %d)",
+        log_debug(".\tbtfromblkrtrimws (\"%s\", \"%s\", %d)",
                 (char *)bdatae(b, NULL), tstrs[i]->data, tstrs[i]->slen);
         bdestroy(b);
         btfromblktrimws(t, tstrs[i]->data, tstrs[i]->slen);
@@ -3389,13 +3389,13 @@ static int test43(void)
         if (!biseq(b, &t)) {
             ret++;
             bassign(b, &t);
-            debug("btfromblktrimws failure: <%s> -> <%s>",
+            log_debug("btfromblktrimws failure: <%s> -> <%s>",
                     tstrs[i]->data, b->data);
         }
-        debug(".\tbtfromblktrimws (\"%s\", \"%s\", %d)",
+        log_debug(".\tbtfromblktrimws (\"%s\", \"%s\", %d)",
                 (char *)bdatae(b, NULL), tstrs[i]->data, tstrs[i]->slen);
         bdestroy(b);
-    }  debug("\t# failures: %d", ret);
+    }  log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3405,19 +3405,19 @@ static int test44_0(const char *str)
     bstring b = bfromcstr("");
     if (NULL == str) {
         ret += 0 <= bassigncstr(NULL, "test");
-        debug(".\tbassigncstr (b = %s, NULL)",
+        log_debug(".\tbassigncstr (b = %s, NULL)",
                 dumpBstring(b = bfromcstr("")));
         ret += 0 <= (v = bassigncstr(b, NULL));
-        debug(" = %d; b -> %s", v, dumpBstring(b));
+        log_debug(" = %d; b -> %s", v, dumpBstring(b));
         ret += 0 <= bassigncstr(&shortBstring, NULL);
         bdestroy(b);
         return ret;
     }
     ret += 0 <= bassigncstr(NULL, str);
-    debug(".\tbassigncstr (b = %s, \"%s\")",
+    log_debug(".\tbassigncstr (b = %s, \"%s\")",
             dumpBstring(b = bfromcstr("")), str);
     ret += 0 > (v = bassigncstr(b, str));
-    debug(" = %d; b -> %s", v, dumpBstring(b));
+    log_debug(" = %d; b -> %s", v, dumpBstring(b));
     ret += 0 != strcmp(bdatae(b, ""), str);
     ret += ((size_t) b->slen) != strlen(str);
     ret += 0 > bassigncstr(b, "xxxxx");
@@ -3425,29 +3425,29 @@ static int test44_0(const char *str)
         log_info(".\tbassigncstr (b = %s, \"%s\")", dumpBstring(b),
                 str);
     ret += 0 <= (v = bassigncstr(b, str));
-    debug(" = %d; b -> %s", v, dumpBstring(b));
+    log_debug(" = %d; b -> %s", v, dumpBstring(b));
     ret += 0 != strcmp(bdatae(b, ""), "xxxxx");
     ret += ((size_t) b->slen) != strlen("xxxxx");
     bwriteallow(*b)  ret += 0 <= bassigncstr(&shortBstring, str);
     bdestroy(b);
-    debug(".\tbassigncstr (a = %s, \"%s\")",
+    log_debug(".\tbassigncstr (a = %s, \"%s\")",
             dumpBstring(&shortBstring), str);
     ret += 0 <= (v = bassigncstr(&shortBstring, str));
-    debug(" = %d; a -> %s", v, dumpBstring(&shortBstring));
+    log_debug(" = %d; a -> %s", v, dumpBstring(&shortBstring));
     return ret;
 }
 
 static int test44(void)
 {
     int ret = 0;
-    debug("TEST: int bassigncstr (bstring a, char * str);");
+    log_debug("TEST: int bassigncstr (bstring a, char * str);");
 
     /* tests with NULL */ 
     ret += test44_0(NULL);
     ret += test44_0(EMPTY_STRING);
     ret += test44_0(SHORT_STRING);
     ret += test44_0(LONG_STRING);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3457,43 +3457,43 @@ static int test45_0(const char *str)
     bstring b = bfromcstr("");
     if (NULL == str) {
         ret += 0 <= bassignblk(NULL, "test", 4);
-        debug(".\tbassignblk (b = %s, NULL, 1)",
+        log_debug(".\tbassignblk (b = %s, NULL, 1)",
                 dumpBstring(b = bfromcstr("")));
         ret += 0 <= (v = bassignblk(b, NULL, 1));
-        debug(" = %d; b -> %s", v, dumpBstring(b));
+        log_debug(" = %d; b -> %s", v, dumpBstring(b));
         ret += 0 <= bassignblk(&shortBstring, NULL, 1);
         bdestroy(b);
         return ret;
     }
     len = (int)strlen(str);
     ret += 0 <= bassignblk(NULL, str, len);
-    debug(".\tbassignblk (b = %s, \"%s\", %d)",
+    log_debug(".\tbassignblk (b = %s, \"%s\", %d)",
             dumpBstring(b = bfromcstr("")), str, len);
     ret += 0 > (v = bassignblk(b, str, len));
-    debug(" = %d; b -> %s", v, dumpBstring(b));
+    log_debug(" = %d; b -> %s", v, dumpBstring(b));
     ret += 0 != strcmp(bdatae(b, ""), str);
     ret += b->slen != len;
     ret += 0 > bassigncstr(b, "xxxxx");
     bwriteprotect(*b) 
-        debug(".\tbassignblk (b = %s, \"%s\", %d)", dumpBstring(b), str,
+        log_debug(".\tbassignblk (b = %s, \"%s\", %d)", dumpBstring(b), str,
                 len);
     ret += 0 <= (v = bassignblk(b, str, len));
-    debug(" = %d; b -> %s", v, dumpBstring(b));
+    log_debug(" = %d; b -> %s", v, dumpBstring(b));
     ret += 0 != strcmp(bdatae(b, ""), "xxxxx");
     ret += ((size_t) b->slen) != strlen("xxxxx");
     bwriteallow(*b)  ret += 0 <= bassignblk(&shortBstring, str, len);
     bdestroy(b);
-    debug(".\tbassignblk (a = %s, \"%s\", %d)",
+    log_debug(".\tbassignblk (a = %s, \"%s\", %d)",
             dumpBstring(&shortBstring), str, len);
     ret += 0 <= (v = bassignblk(&shortBstring, str, len));
-    debug(" = %d; a -> %s", v, dumpBstring(&shortBstring));
+    log_debug(" = %d; a -> %s", v, dumpBstring(&shortBstring));
     return ret;
 }
 
 static int test45(void)
 {
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int bassignblk (bstring a, const void * s, int len);");
 
     /* tests with NULL */ 
@@ -3501,7 +3501,7 @@ static int test45(void)
     ret += test45_0(EMPTY_STRING);
     ret += test45_0(SHORT_STRING);
     ret += test45_0(LONG_STRING);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3510,32 +3510,32 @@ static int test46_0(const_bstring r, bstring b, int count,
 {
     int ret;
     va_list arglist;
-    debug(".\tbvcformata (%s, %d, \"%s\", ...) -> ", dumpBstring(b),
+    log_debug(".\tbvcformata (%s, %d, \"%s\", ...) -> ", dumpBstring(b),
             count, fmt);
     va_start(arglist, fmt);
     ret = bvcformata(b, count, fmt, arglist);
     va_end(arglist);
-    debug("%d, %s (%s)", ret, dumpBstring(b), dumpBstring(r));
+    log_debug("%d, %s (%s)", ret, dumpBstring(b), dumpBstring(r));
     if (ret < 0)
         return (NULL != r);
     ret += 1 != biseq(r, b);
     if (0 != ret)
-        debug("\t->failed");
+        log_debug("\t->failed");
     return ret;
 }
 
 static int test46_1(bstring b, const char *fmt, const_bstring r, ...)
 {
     int ret;
-    debug(".\tbvformata (&, %s, \"%s\", ...) -> ", dumpBstring(b),
+    log_debug(".\tbvformata (&, %s, \"%s\", ...) -> ", dumpBstring(b),
             fmt);
     bvformata(ret, b, fmt, r);
-    debug("%d, %s (%s)", ret, dumpBstring(b), dumpBstring(r));
+    log_debug("%d, %s (%s)", ret, dumpBstring(b), dumpBstring(r));
     if (ret < 0)
         return (NULL != r);
     ret += 1 != biseq(r, b);
     if (0 != ret)
-        debug("\t->failed");
+        log_debug("\t->failed");
     return ret;
 }
 
@@ -3543,7 +3543,7 @@ static int test46(void)
 {
     bstring b;
     int ret = 0;
-    debug
+    log_debug
         ("TEST: int bvcformata (bstring b, int count, const char * fmt, va_list arg);");
     ret += test46_0(NULL, NULL, 8, "[%d]", 15);
     ret += test46_0(NULL, &shortBstring, 8, "[%d]", 15);
@@ -3562,7 +3562,7 @@ static int test46(void)
     ret +=
         test46_0(NULL, b, shortBstring.slen - 1, "%s",
                 (char *)shortBstring.data);
-    debug
+    log_debug
         ("TEST: bvformata (int &ret, bstring b, const char * fmt, <type> lastarg);");
     ret += test46_1(NULL, "[%d]", NULL, 15);
     ret += test46_1(&shortBstring, "[%d]", NULL, 15);
@@ -3574,7 +3574,7 @@ static int test46(void)
     b->slen = 0;
     ret += test46_1(b, "%s", &longBstring, (char *)longBstring.data);
     bdestroy(b);
-    debug("\t# failures: %d", ret);
+    log_debug("\t# failures: %d", ret);
     return ret;
 }
 
@@ -3585,7 +3585,7 @@ int main(int argc, char *argv[])
     int ret = 0;
     argc = argc;
     argv = argv;
-    debug("Direct case testing of bstring core functions");
+    log_debug("Direct case testing of bstring core functions");
     ret += test0();
     ret += test1();
     ret += test2();
@@ -3633,11 +3633,11 @@ int main(int argc, char *argv[])
     ret += test44();
     ret += test45();
     ret += test46();
-    debug("# test bstr failures: %d", ret);
+    log_debug("# test bstr failures: %d", ret);
     if (ret > 0) {
         printf("FAILED: %d failures in bstrlib", ret);
     }
-    debug("# test aux failures: %d", ret);
+    log_debug("# test aux failures: %d", ret);
     return ret;
 }
 

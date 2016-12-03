@@ -46,7 +46,7 @@ static inline const unsigned char *String_base_search(const unsigned
         haystack += skip_chars[haystack[last]];
     }
 
-error:			// fallthrough
+end:			// fallthrough
     return NULL;
 }
 
@@ -80,7 +80,7 @@ StringScanner *StringScanner_create(bstring in)
     assert(scan != NULL && "fuck");
     return scan;
 
-error:
+end:
     free(scan);
     return NULL;
 }

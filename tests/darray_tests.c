@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "u.h"
 #include <lcthw/darray.h>
 
 static DArray *array = NULL;

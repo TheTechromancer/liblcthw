@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "u.h"
 #include <lcthw/ringbuffer.h>
 
 static RingBuffer *buffer = NULL;
@@ -23,7 +23,7 @@ char *test_read_write()
 {
     mu_assert(RingBuffer_empty(buffer), "Should be empty.");
     mu_assert(!RingBuffer_full(buffer), "Should NOT be full.");
-    debug("data is: %d, space is: %d",
+    log_debug("data is: %d, space is: %d",
             RingBuffer_available_data(buffer),
             RingBuffer_available_space(buffer));
     mu_assert(RingBuffer_available_data(buffer) == 0,

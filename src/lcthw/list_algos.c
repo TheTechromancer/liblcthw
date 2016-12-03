@@ -1,5 +1,5 @@
 #include <lcthw/list_algos.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 
 inline void ListNode_swap(ListNode * a, ListNode * b)
 {

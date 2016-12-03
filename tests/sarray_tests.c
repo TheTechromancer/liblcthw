@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "u.h"
 #include <lcthw/sarray.h>
 
 static SuffixArray *sarry = NULL;

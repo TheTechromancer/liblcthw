@@ -1,7 +1,7 @@
 #undef NDEBUG
 #include <stdint.h>
 #include <lcthw/hashmap.h>
-#include <lcthw/dbg.h>
+#include <lcthw/e.h>
 #include <lcthw/bstrlib.h>
 
 static int default_compare(void *a, void *b)
@@ -47,7 +47,7 @@ Hashmap *Hashmap_create(Hashmap_compare compare, Hashmap_hash hash)
 
     return map;
 
-error:
+end:
     if (map) {
         Hashmap_destroy(map);
     }
@@ -90,7 +90,7 @@ static inline HashmapNode *Hashmap_node_create(int hash, void *key,
 
     return node;
 
-error:
+end:
     return NULL;
 }
 
@@ -116,7 +116,7 @@ static inline DArray *Hashmap_find_bucket(Hashmap * map, void *key,
 
     return bucket;
 
-error:
+end:
     return NULL;
 }
 
@@ -133,7 +133,7 @@ int Hashmap_set(Hashmap * map, void *key, void *data)
 
     return 0;
 
-error:
+end:
     return -1;
 }
 
@@ -143,7 +143,7 @@ static inline int Hashmap_get_node(Hashmap * map, uint32_t hash,
     int i = 0;
 
     for (i = 0; i < DArray_end(bucket); i++) {
-        debug("TRY: %d", i);
+        log_debug("TRY: %d", i);
         HashmapNode *node = DArray_get(bucket, i);
         if (node->hash == hash && map->compare(node->key, key) == 0) {
             return i;
@@ -168,7 +168,7 @@ void *Hashmap_get(Hashmap * map, void *key)
 
     return node->data;
 
-error:			// fallthrough
+end:			// fallthrough
     return NULL;
 }
 
