@@ -1,6 +1,6 @@
 echo "Running unit tests:"
 
-for i in tests/*_tests
+for i in tests/*bstree*_tests
 do
     $i 2>&1 >> tests/tests.log
     if [ ! $? ]

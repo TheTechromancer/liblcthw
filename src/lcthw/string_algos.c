@@ -58,7 +58,7 @@ int String_find(bstring in, bstring what)
     ssize_t hlen = blength(in);
     const unsigned char *needle = (const unsigned char *)bdata(what);
     ssize_t nlen = blength(what);
-    size_t skip_chars[UCHAR_MAX + 1] = { 0 };
+    size_t skip_chars[UCHAR_MAX + 1];
 
     String_setup_skip_chars(skip_chars, needle, nlen);
 
@@ -110,9 +110,9 @@ int StringScanner_scan(StringScanner * scan, bstring tofind)
         return -1;
     }
 
-    if ((const unsigned char *)bdata(tofind) != scan->needle) {
-        StringScanner_set_needle(scan, tofind);
-    }
+    //if ((const unsigned char *)bdata(tofind) != scan->needle) {
+    StringScanner_set_needle(scan, tofind);
+    //}
 
     found = String_base_search(scan->haystack, scan->hlen,
             scan->needle, scan->nlen,
